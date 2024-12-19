@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace Serwis_Książkowy.Migrations
 {
     /// <inheritdoc />
@@ -215,11 +213,12 @@ namespace Serwis_Książkowy.Migrations
                 {
                     BookId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Isbn = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AuthorId = table.Column<int>(type: "int", nullable: false),
-                    GenreId = table.Column<int>(type: "int", nullable: false),
+                    GenreId = table.Column<int>(type: "int", nullable: true),
                     PublicationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Rating = table.Column<float>(type: "real", nullable: false)
+                    Rating = table.Column<float>(type: "real", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -234,8 +233,7 @@ namespace Serwis_Książkowy.Migrations
                         name: "FK_Books_Genres_GenreId",
                         column: x => x.GenreId,
                         principalTable: "Genres",
-                        principalColumn: "GenreId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "GenreId");
                 });
 
             migrationBuilder.CreateTable(
@@ -292,28 +290,6 @@ namespace Serwis_Książkowy.Migrations
                         principalColumn: "BookId",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.InsertData(
-                table: "Authors",
-                columns: new[] { "AuthorId", "Name" },
-                values: new object[] { 1, "Pierce Brosnan" });
-
-            migrationBuilder.InsertData(
-                table: "Genres",
-                columns: new[] { "GenreId", "Name" },
-                values: new object[,]
-                {
-                    { 1, "Fantasy" },
-                    { 2, "Science Fiction" },
-                    { 3, "Mystery" },
-                    { 4, "Non-Fiction" },
-                    { 5, "Romance" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Books",
-                columns: new[] { "BookId", "AuthorId", "GenreId", "PublicationDate", "Rating", "Title" },
-                values: new object[] { 1, 1, 3, new DateTime(2024, 12, 17, 0, 0, 0, 0, DateTimeKind.Local), 0f, "Book1" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

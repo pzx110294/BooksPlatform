@@ -248,13 +248,6 @@ namespace Serwis_Książkowy.Migrations
                     b.HasKey("AuthorId");
 
                     b.ToTable("Authors");
-
-                    b.HasData(
-                        new
-                        {
-                            AuthorId = 1,
-                            Name = "Pierce Brosnan"
-                        });
                 });
 
             modelBuilder.Entity("Serwis_Książkowy.Models.Book", b =>
@@ -268,13 +261,17 @@ namespace Serwis_Książkowy.Migrations
                     b.Property<int>("AuthorId")
                         .HasColumnType("int");
 
-                    b.Property<int>("GenreId")
+                    b.Property<int?>("GenreId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Isbn")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("PublicationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<float>("Rating")
+                    b.Property<float?>("Rating")
                         .HasColumnType("real");
 
                     b.Property<string>("Title")
@@ -288,17 +285,6 @@ namespace Serwis_Książkowy.Migrations
                     b.HasIndex("GenreId");
 
                     b.ToTable("Books");
-
-                    b.HasData(
-                        new
-                        {
-                            BookId = 1,
-                            AuthorId = 1,
-                            GenreId = 3,
-                            PublicationDate = new DateTime(2024, 12, 17, 0, 0, 0, 0, DateTimeKind.Local),
-                            Rating = 0f,
-                            Title = "Book1"
-                        });
                 });
 
             modelBuilder.Entity("Serwis_Książkowy.Models.FavouriteAuthor", b =>
@@ -331,33 +317,6 @@ namespace Serwis_Książkowy.Migrations
                     b.HasKey("GenreId");
 
                     b.ToTable("Genres");
-
-                    b.HasData(
-                        new
-                        {
-                            GenreId = 1,
-                            Name = "Fantasy"
-                        },
-                        new
-                        {
-                            GenreId = 2,
-                            Name = "Science Fiction"
-                        },
-                        new
-                        {
-                            GenreId = 3,
-                            Name = "Mystery"
-                        },
-                        new
-                        {
-                            GenreId = 4,
-                            Name = "Non-Fiction"
-                        },
-                        new
-                        {
-                            GenreId = 5,
-                            Name = "Romance"
-                        });
                 });
 
             modelBuilder.Entity("Serwis_Książkowy.Models.Review", b =>
@@ -484,9 +443,7 @@ namespace Serwis_Książkowy.Migrations
 
                     b.HasOne("Serwis_Książkowy.Models.Genre", "Genre")
                         .WithMany("Books")
-                        .HasForeignKey("GenreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GenreId");
 
                     b.Navigation("Author");
 
