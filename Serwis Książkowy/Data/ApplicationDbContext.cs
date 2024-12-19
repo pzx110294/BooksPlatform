@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Serwis_Książkowy.Data.Configurations;
 using Serwis_Książkowy.Models;
 
 namespace Serwis_Książkowy.Data;
@@ -19,42 +20,8 @@ public class ApplicationDbContext : IdentityDbContext
     {
         base.OnModelCreating(modelBuilder);
 
-
-        modelBuilder.Entity<UserLibrary>()
-            .HasKey(ul => new { ul.UserId, ul.BookId });
-        modelBuilder.Entity<UserLibrary>()
-            .HasOne(ul => ul.User)
-            .WithMany(u => u.UserLibraries)
-            .HasForeignKey(ul => ul.UserId);
-        modelBuilder.Entity<UserLibrary>()
-            .HasOne(ul => ul.Book)
-            .WithMany(b => b.UserLibraries)
-            .HasForeignKey(ul => ul.BookId);
-        modelBuilder.Entity<UserLibrary>()
-            .Property(ul => ul.Status)
-            .HasConversion<string>();
+        modelBuilder.ConfigureModel();
         
-        modelBuilder.Entity<Review>()
-            .HasOne(r => r.User)
-            .WithMany(u => u.Reviews)
-            .HasForeignKey(r => r.UserId);
-        modelBuilder.Entity<Review>()
-            .HasOne(r => r.Book)
-            .WithMany(b => b.Reviews)
-            .HasForeignKey(r => r.BookId);
-
-        modelBuilder.Entity<FavouriteAuthor>()
-            .HasKey(fa => new { fa.UserId, fa.AuthorId });
-        modelBuilder.Entity<FavouriteAuthor>()
-            .HasOne(fa => fa.User)
-            .WithMany(u => u.FavouriteAuthors)
-            .HasForeignKey(fa => fa.UserId);
-        modelBuilder.Entity<FavouriteAuthor>()
-            .HasOne(fa => fa.Author)
-            .WithMany(a => a.FavouriteAuthors)
-            .HasForeignKey(fa => fa.AuthorId);
-
-
         modelBuilder.Entity<Genre>().HasData(
             new Genre { GenreId = 1, Name = "Fantasy" },
             new Genre { GenreId = 2, Name = "Science Fiction" },
@@ -67,4 +34,5 @@ public class ApplicationDbContext : IdentityDbContext
         );
         modelBuilder.Entity<Book>().HasData(
             new Book { BookId = 1, Title = "Book1", AuthorId = 1, GenreId = 3, PublicationDate = DateTime.Today }); }
+    
 }
