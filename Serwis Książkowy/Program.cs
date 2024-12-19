@@ -22,6 +22,15 @@ namespace Serwis_Książkowy
             
             var app = builder.Build();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                dbContext.Database.Migrate();
+
+                DatasetLoader.LoadDataset(dbContext);
+            }
+
+            
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
@@ -43,6 +52,7 @@ namespace Serwis_Książkowy
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.MapRazorPages();
+            app.Services.CreateScope();
             app.Run();
         }
     }
