@@ -8,53 +8,98 @@ namespace Serwis_Książkowy.Data;
 
 public static class DatasetLoader
 {
-    private static string filePath = "Dataset/books.csv";
+    private const string filePath = "Dataset/books.csv";
+    private static ApplicationDbContext _dbContext;
+    
     public static void LoadDataset(ApplicationDbContext dbContext)
     {
-        if (dbContext.Books.Any()) return;
+        if (dbContext.IsAlreadyLoaded()) return;
         
-        using var reader = new StreamReader(filePath);
-        var config = new CsvConfiguration(CultureInfo.InvariantCulture);
-        config.Mode = CsvMode.NoEscape;
-        
-        using (var csv = new CsvReader(reader, config))
+        _dbContext = dbContext;
+        CsvConfig csvConfig = ConfigureCsvLoader();
+        var records = ReadCsvFile(csvConfig);
+        AddRecordsToDb(records);
+    }
+
+
+    private static bool IsAlreadyLoaded(this ApplicationDbContext dbContext)
+    {
+        return dbContext.Books.Any();
+    }
+
+    private static CsvConfig ConfigureCsvLoader()
+    {
+        var csvConfig = new CsvConfig(new StreamReader(filePath), new CsvConfiguration(CultureInfo.InvariantCulture));
+        return csvConfig;
+    }
+    private static IEnumerable<BookCsvModel> ReadCsvFile(CsvConfig csvConfig)
+    {
+        using var csv = new CsvReader(csvConfig.Reader, csvConfig.Config);
+        return  csv.GetRecords<BookCsvModel>();
+    }
+
+    private static void AddRecordsToDb(IEnumerable<BookCsvModel> records)
+    {
+        foreach (BookCsvModel record in records)
         {
-            var records = csv.GetRecords<BookCsvModel>();
-
-            foreach (BookCsvModel record in records)
-            {
-                //Add author if not exists
-                var authorName = record.Authors.Trim();
-                Author author;
-                var existingAuthor = dbContext.Authors.SingleOrDefault(a => a.Name == authorName);
-                if (existingAuthor == null)
-                {
-                    author = new Author { Name = authorName };
-                    dbContext.Authors.Add(author);
-                }
-                else
-                {
-                    author = existingAuthor;
-                }
-                
-                //Add book
-                var book = record.Title.Trim();
-                var existingBook = dbContext.Books.Count(b => b.Title == book);
-                if (existingBook == 0)
-                {
-                    dbContext.Books.Add(new Book
-                    {
-                        Title = book,
-                        Author = author,
-                        PublicationDate = record.PublicationDate,
-                        Isbn = record.ISBN13,
-                        Rating = record.AverageRating
-                    });
-                }
-
-                dbContext.SaveChanges();
-            }
+            Author author = AddAuthor(record.Authors);
+            AddBook(record, author);
+            
+            _dbContext.SaveChanges();
         }
+    }
+
+    private static Author AddAuthor(string authorName)
+    {
+        authorName = authorName.Trim();
+        Author author;
+        Author? existingAuthor = CheckIfAuthorExists(authorName);
+
+        if (existingAuthor != null)
+        {
+            return existingAuthor;
+        }
+        author = new Author { Name = authorName };
+        _dbContext.Authors.Add(author);
+        return author;
+    }
+    
+    
+    private static Author? CheckIfAuthorExists(string name)
+    {
+        return _dbContext.Authors.SingleOrDefault(a => a.Name == name);
+    }
+    private static void AddBook(BookCsvModel record, Author author)
+    {
+        var bookTitle = record.Title.Trim();
+        if (!CheckIfBookExists(bookTitle)) return;
+        
+        _dbContext.Books.Add(new Book
+        {
+            Title = bookTitle,
+            Author = author,
+            PublicationDate = record.PublicationDate,
+            Isbn = record.ISBN13,
+            Rating = record.AverageRating
+        });
+    }
+
+    private static bool CheckIfBookExists(string title)
+    {
+        return _dbContext.Books.Count(b => b.Title == title) > 0;
+    }
+}
+
+class CsvConfig
+{
+    public StreamReader Reader { get; private set; }
+    public CsvConfiguration Config { get; private set; }
+
+    public CsvConfig(StreamReader reader, CsvConfiguration config)
+    {
+        config.Mode = CsvMode.NoEscape;
+        Reader = reader;
+        Config = config;
     }
 }
 
