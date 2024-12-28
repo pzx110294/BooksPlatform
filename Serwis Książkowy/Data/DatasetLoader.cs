@@ -35,7 +35,7 @@ public static class DatasetLoader
     private static IEnumerable<BookCsvModel> ReadCsvFile(CsvConfig csvConfig)
     {
         using var csv = new CsvReader(csvConfig.Reader, csvConfig.Config);
-        return  csv.GetRecords<BookCsvModel>();
+        return csv.GetRecords<BookCsvModel>().ToList();
     }
 
     private static void AddRecordsToDb(IEnumerable<BookCsvModel> records)
@@ -72,7 +72,7 @@ public static class DatasetLoader
     private static void AddBook(BookCsvModel record, Author author)
     {
         var bookTitle = record.Title.Trim();
-        if (!CheckIfBookExists(bookTitle)) return;
+        if (CheckIfBookExists(bookTitle)) return;
         
         _dbContext.Books.Add(new Book
         {
