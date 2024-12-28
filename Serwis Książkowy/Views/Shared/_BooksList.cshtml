@@ -1,0 +1,13 @@
+﻿@model List<Book>
+<h1>@ViewData["Header"]</h1>
+@foreach (var obj in Model)
+{
+    <div>
+        @{
+            string coverUrl = "https://covers.openlibrary.org/b/isbn/" + obj.Isbn + "-S.jpg";
+            <img src=@coverUrl />
+        }
+        @obj.Title | @obj.Author.Name | @obj.Rating
+    </div> <br/>
+}
+
