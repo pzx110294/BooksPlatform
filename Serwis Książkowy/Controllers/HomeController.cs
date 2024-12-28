@@ -18,7 +18,6 @@ namespace Serwis_Książkowy.Controllers
 
         public IActionResult Index()
         {
-            return View();
             List<Book> books = db.Books
                 .Include(a => a.Author)
                 .Where(b => b.Rating < 5)
@@ -30,8 +29,24 @@ namespace Serwis_Książkowy.Controllers
         }
 
     
-        }
+        public async Task<IActionResult> Search(string searchQuery)
+        {
+            if (String.IsNullOrEmpty(searchQuery))
+            {
+                return NotFound();
+            }
 
+            Console.WriteLine(searchQuery);
+            List<Book> books = db.Books
+                .Include(a => a.Author)
+                .OrderByDescending(b => b.Rating)
+                .Where(b => b.Author.Name.Contains(searchQuery) || b.Title.Contains(searchQuery) || b.Isbn == searchQuery)
+                .Take(10)
+                .ToList();
+            ViewData["Header"] = "Searched books";
+            return View(books);
+        }
+        
         public IActionResult Privacy()
         {
             return View();
