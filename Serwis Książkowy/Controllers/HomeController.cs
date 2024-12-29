@@ -1,19 +1,22 @@
 using Microsoft.AspNetCore.Mvc;
 using Serwis_Książkowy.Models;
 using System.Diagnostics;
+using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using Serwis_Książkowy.Data;
+using Serwis_Książkowy.Helpers;
+using Serwis_Książkowy.ViewModels;
 
 namespace Serwis_Książkowy.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext db;
+        private readonly ApplicationDbContext _context;
 
         public HomeController(ApplicationDbContext dbContext)
         {
-            db = dbContext;
+            _context = dbContext;
         }
 
     
@@ -24,13 +27,8 @@ namespace Serwis_Książkowy.Controllers
                 return NotFound();
             }
 
-            Console.WriteLine(searchQuery);
-            IQueryable<Book> books = db.Books
-                .Include(a => a.Author)
-                .OrderByDescending(b => b.Rating)
-                .Where(b => b.Author.Name.Contains(searchQuery) || b.Title.Contains(searchQuery) ||
-                            b.Isbn == searchQuery)
-                .Take(10);
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            IQueryable<BookViewModel> books = BookQueryHelper.GetSearchedBooks(_context, searchQuery, userId);
             ViewData["Header"] = "Searched books";
             return View(books);
         }

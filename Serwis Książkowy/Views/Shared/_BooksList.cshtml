@@ -1,18 +1,23 @@
-﻿@model IQueryable<Book>
+﻿@using System.Security.Claims
+@model IQueryable<Serwis_Książkowy.ViewModels.BookViewModel>
+
 <h1>@ViewData["Header"]</h1>
 @foreach (var obj in Model)
 {
     <div>
         @{
-            string coverUrl = "https://covers.openlibrary.org/b/isbn/" + obj.Isbn + "-S.jpg";
+            string coverUrl = "https://covers.openlibrary.org/b/isbn/" + obj.Book.Isbn + "-S.jpg";
             <img src=@coverUrl />
         }
-        @obj.Title | @obj.Author.Name | @obj.Rating 
-        <div>
-            <form asp-controller="UserLibrary" asp-action="AddToLibrary" method="post">
-                <input type="hidden" name="BookId" value="@obj.BookId" />
-                <button type="submit">Add to library</button>
-            </form>
-        </div>
+        @obj.Book.Title | @obj.Book.Author.Name | @obj.Book.Rating
+        @if (!String.IsNullOrEmpty(User.FindFirstValue(ClaimTypes.NameIdentifier)))
+        {
+            if (obj.IsInLibrary)
+            {
+                <partial name="InLibrary" model="obj.Status"></partial>
+            }
+            <partial name="AddToLibrary" model="obj.Book"/>
+        }
+        
     </div> <br/>
 }
