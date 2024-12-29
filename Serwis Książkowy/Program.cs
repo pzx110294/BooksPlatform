@@ -17,7 +17,15 @@ namespace Serwis_Książkowy
                 options => options.UseSqlServer(
                     builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            builder.Services.AddDefaultIdentity<IdentityUser>()
+            builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = false;
+                    options.Password.RequireDigit = false;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequiredLength = 3;
+                })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             
             var app = builder.Build();
@@ -49,7 +57,7 @@ namespace Serwis_Książkowy
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Books}/{action=Index}/{id?}");
 
             app.MapRazorPages();
             app.Services.CreateScope();
