@@ -7,7 +7,12 @@
             string coverUrl = "https://covers.openlibrary.org/b/isbn/" + obj.Isbn + "-S.jpg";
             <img src=@coverUrl />
         }
-        @obj.Title | @obj.Author.Name | @obj.Rating
+        @obj.Title | @obj.Author.Name | @obj.Rating 
+        <div>
+            <form asp-controller="UserLibrary" asp-action="AddToLibrary" method="post">
+                <input type="hidden" name="BookId" value="@obj.BookId" />
+                <button type="submit">Add to library</button>
+            </form>
+        </div>
     </div> <br/>
 }
-
