@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Serwis_Książkowy.Models;
 
 namespace Serwis_Książkowy.Areas.Identity.Pages.Account.Manage
 {

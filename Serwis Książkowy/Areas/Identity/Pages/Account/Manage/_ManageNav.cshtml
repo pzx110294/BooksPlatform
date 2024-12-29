@@ -1,4 +1,5 @@
-@inject SignInManager<IdentityUser> SignInManager
+@using Serwis_Książkowy.Models
+@inject SignInManager<AppUser> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }
