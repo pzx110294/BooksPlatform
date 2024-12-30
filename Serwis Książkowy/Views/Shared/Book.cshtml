@@ -1,0 +1,20 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Serwis_Książkowy.Helpers
+@model Serwis_Książkowy.ViewModels.BookViewModel
+
+<div>
+    @{
+        string coverUrl = "https://covers.openlibrary.org/b/isbn/" + Model.Book.Isbn + "-S.jpg";
+        <img src=@coverUrl />
+    }
+    @Model.Book.Title | @Model.Book.Author.Name | @Model.Book.Rating
+    @if (!String.IsNullOrEmpty(User.GetUserId()))
+    {
+        if (Model.IsInLibrary)
+        {
+            <partial name="InLibrary" model="Model"></partial>
+        }
+
+        <partial name="AddToLibrary" model="Model.Book"/>
+    }
+</div>

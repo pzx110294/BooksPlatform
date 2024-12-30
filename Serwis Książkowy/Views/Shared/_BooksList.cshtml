@@ -1,23 +1,7 @@
-﻿@using Serwis_Książkowy.Helpers
-@model IQueryable<Serwis_Książkowy.ViewModels.BookViewModel>
+﻿@model IQueryable<Serwis_Książkowy.ViewModels.BookViewModel>
 
 <h1>@ViewData["Header"]</h1>
 @foreach (var obj in Model)
 {
-    <div>
-        @{
-            string coverUrl = "https://covers.openlibrary.org/b/isbn/" + obj.Book.Isbn + "-S.jpg";
-            <img src=@coverUrl />
-        }
-        @obj.Book.Title | @obj.Book.Author.Name | @obj.Book.Rating
-        @if (!String.IsNullOrEmpty(User.GetUserId()))
-        {
-            if (obj.IsInLibrary)
-            {
-                <partial name="InLibrary" model="obj"></partial>
-            }
-            <partial name="AddToLibrary" model="obj.Book"/>
-        }
-        
-    </div> <br/>
+    <partial name="Book" model="obj"/><br/>
 }
