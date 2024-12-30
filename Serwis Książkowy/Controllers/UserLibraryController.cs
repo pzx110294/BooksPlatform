@@ -20,7 +20,8 @@ namespace Serwis_Książkowy.Controllers
         // GET: UserLibrary
         public ActionResult Index()
         {
-            return View();
+            var books = BookQueryHelper.GetUserBooks(_context, User);
+            return View(books);
         }
 
         [HttpPost]
