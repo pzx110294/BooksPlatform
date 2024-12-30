@@ -9,7 +9,6 @@ namespace Serwis_Książkowy.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
 
         public HomeController(ApplicationDbContext dbContext)

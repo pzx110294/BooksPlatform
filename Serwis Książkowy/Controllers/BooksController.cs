@@ -22,7 +22,7 @@ namespace Serwis_Książkowy.Controllers
         {
             string userId = User.GetUserId();
 
-            IQueryable<BookViewModel> bookViewModel = BookQueryHelper.GeBestRatedBooks(_context, userId);
+            IQueryable<BookViewModel> bookViewModel = BookQueryHelper.GetBestRatedBooks(_context, userId);
             ViewData["Header"] = "Best rated books";
     
             return View(bookViewModel);
