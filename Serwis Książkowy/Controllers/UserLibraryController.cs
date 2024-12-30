@@ -62,7 +62,8 @@ namespace Serwis_Książkowy.Controllers
 
             _context.SaveChanges();
 
-            return RedirectToAction("Index", "Books");
+            string referer = Request.Headers["Referer"].ToString();
+            return Redirect(referer);
         }
 
         [HttpPost]
@@ -72,9 +73,11 @@ namespace Serwis_Książkowy.Controllers
             if (String.IsNullOrEmpty(userId)) return NotFound();
 
             var bookInLibrary = _context.UserLibraries.Find(userId, bookId);
-            if (bookInLibrary != null) _context.UserLibraries.Remove(bookInLibrary);
+            if (bookInLibrary != null) _context.UserLibraries.Remove(bookInLibrary); 
             _context.SaveChanges();
-            return RedirectToAction("Index", "Books");
+
+            string referer = Request.Headers["Referer"].ToString();
+            return Redirect(referer);
         }
     }
 }
