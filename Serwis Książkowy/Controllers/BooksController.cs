@@ -1,11 +1,9 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Serwis_Książkowy.Data;
 using Serwis_Książkowy.Helpers;
 using Serwis_Książkowy.Models;
-using Serwis_Książkowy.Models.Enums;
 using Serwis_Książkowy.ViewModels;
 
 namespace Serwis_Książkowy.Controllers
@@ -22,7 +20,7 @@ namespace Serwis_Książkowy.Controllers
         // GET: Best rated books
         public IActionResult Index()
         {
-            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string userId = User.GetUserId();
 
             IQueryable<BookViewModel> bookViewModel = BookQueryHelper.GeBestRatedBooks(_context, userId);
             ViewData["Header"] = "Best rated books";

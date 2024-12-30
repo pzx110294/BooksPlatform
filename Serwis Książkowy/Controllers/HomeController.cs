@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Serwis_Książkowy.Models;
 using System.Diagnostics;
-using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
 using Serwis_Książkowy.Data;
 using Serwis_Książkowy.Helpers;
 using Serwis_Książkowy.ViewModels;
@@ -27,7 +25,7 @@ namespace Serwis_Książkowy.Controllers
                 return NotFound();
             }
 
-            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string userId = User.GetUserId();
             IQueryable<BookViewModel> books = BookQueryHelper.GetSearchedBooks(_context, searchQuery, userId);
             ViewData["Header"] = "Searched books";
             return View(books);
