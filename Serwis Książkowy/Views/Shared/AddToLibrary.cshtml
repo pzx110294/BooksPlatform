@@ -2,7 +2,7 @@
 <div>
     <form asp-controller="UserLibrary" asp-action="AddToLibrary" method="post">
         <input type="hidden" name="BookId" value="@Model.BookId"/>
-        <label for="status">Status:</label>
+        <label for="status">Set status:</label>
         <select id="status" name="Status">
             <option value="Reading">Reading</option>
             <option value="Completed">Completed</option>

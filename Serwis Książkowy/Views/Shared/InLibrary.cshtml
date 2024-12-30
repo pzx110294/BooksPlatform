@@ -1,2 +1,6 @@
-﻿| <b>@Model</b>
+﻿| <b>@Model.Status</b>
 
+<form asp-area="" asp-controller="UserLibrary" asp-action="DeleteFromLibrary" method="post">
+    <input type="hidden" name="bookId" value="@Model.Book.BookId" />
+    <button type="submit" class="nav-link text-dark">Delete</button>
+</form>

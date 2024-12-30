@@ -1,4 +1,4 @@
-﻿@using System.Security.Claims
+﻿@using Serwis_Książkowy.Helpers
 @model IQueryable<Serwis_Książkowy.ViewModels.BookViewModel>
 
 <h1>@ViewData["Header"]</h1>
@@ -10,11 +10,11 @@
             <img src=@coverUrl />
         }
         @obj.Book.Title | @obj.Book.Author.Name | @obj.Book.Rating
-        @if (!String.IsNullOrEmpty(User.FindFirstValue(ClaimTypes.NameIdentifier)))
+        @if (!String.IsNullOrEmpty(User.GetUserId()))
         {
             if (obj.IsInLibrary)
             {
-                <partial name="InLibrary" model="obj.Status"></partial>
+                <partial name="InLibrary" model="obj"></partial>
             }
             <partial name="AddToLibrary" model="obj.Book"/>
         }

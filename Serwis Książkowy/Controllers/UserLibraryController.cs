@@ -1,8 +1,8 @@
 using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serwis_Książkowy.Data;
+using Serwis_Książkowy.Helpers;
 using Serwis_Książkowy.Models;
 using Serwis_Książkowy.Models.Enums;
 
@@ -26,7 +26,7 @@ namespace Serwis_Książkowy.Controllers
         [HttpPost]
         public IActionResult AddToLibrary(int bookId, Status status)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.GetUserId();
             if (String.IsNullOrEmpty(userId)) return NotFound();
 
             var user = _context.Users.Include(u => u.UserLibraries).FirstOrDefault(u => u.Id == userId);
@@ -62,6 +62,18 @@ namespace Serwis_Książkowy.Controllers
 
             _context.SaveChanges();
 
+            return RedirectToAction("Index", "Books");
+        }
+
+        [HttpPost]
+        public IActionResult DeleteFromLibrary(int bookId)
+        {
+            string userId = User.GetUserId();
+            if (String.IsNullOrEmpty(userId)) return NotFound();
+
+            var bookInLibrary = _context.UserLibraries.Find(userId, bookId);
+            if (bookInLibrary != null) _context.UserLibraries.Remove(bookInLibrary);
+            _context.SaveChanges();
             return RedirectToAction("Index", "Books");
         }
     }
