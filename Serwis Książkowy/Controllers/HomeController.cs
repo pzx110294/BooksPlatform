@@ -7,7 +7,7 @@ using Serwis_Książkowy.ViewModels;
 
 namespace Serwis_Książkowy.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : PaginationController
     {
         private readonly ApplicationDbContext _context;
 
@@ -17,7 +17,7 @@ namespace Serwis_Książkowy.Controllers
         }
 
     
-        public IActionResult Search(string searchQuery)
+        public IActionResult Search(string searchQuery, int page = 1, int pageSize = 10)
         {
             if (String.IsNullOrEmpty(searchQuery))
             {
@@ -25,9 +25,11 @@ namespace Serwis_Książkowy.Controllers
             }
 
             string userId = User.GetUserId();
-            IQueryable<BookViewModel> books = BookQueryHelper.GetSearchedBooks(_context, searchQuery, userId);
-            ViewData["Header"] = "Searched books";
-            return View(books);
+            var results = BookQueryHelper.GetSearchedBooks(_context, searchQuery, page, pageSize, userId);
+            IQueryable<BookViewModel> bookViewModel = results.Books;
+            int totalPages = results.TotalPages;
+            SetPaginationData(page, totalPages);
+            return View(bookViewModel);
         }
         
         public IActionResult Privacy()

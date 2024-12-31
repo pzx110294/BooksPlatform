@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.EntityFrameworkCore;
 using Serwis_Książkowy.Data;
 using Serwis_Książkowy.Helpers;
@@ -8,7 +9,7 @@ using Serwis_Książkowy.ViewModels;
 
 namespace Serwis_Książkowy.Controllers
 {
-    public class BooksController : Controller
+    public class BooksController : PaginationController
     {
         private readonly ApplicationDbContext _context;
 
@@ -18,13 +19,16 @@ namespace Serwis_Książkowy.Controllers
         }
 
         // GET: Best rated books
-        public IActionResult Index()
+        public IActionResult Index(int page = 1, int pageSize = 10)
         {
             string userId = User.GetUserId();
-
-            IQueryable<BookViewModel> bookViewModel = BookQueryHelper.GetBestRatedBooks(_context, userId);
+            
+            var results = BookQueryHelper.GetBestRatedBooks(_context, page, pageSize, userId);
+            IQueryable<BookViewModel> bookViewModel = results.Books;
+            int totalPages = results.TotalPages;
+            
             ViewData["Header"] = "Best rated books";
-    
+            SetPaginationData(page, totalPages);
             return View(bookViewModel);
         }
 

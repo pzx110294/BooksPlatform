@@ -1,14 +1,14 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serwis_Książkowy.Data;
 using Serwis_Książkowy.Helpers;
 using Serwis_Książkowy.Models;
 using Serwis_Książkowy.Models.Enums;
+using Serwis_Książkowy.ViewModels;
 
 namespace Serwis_Książkowy.Controllers
 {
-    public class UserLibraryController : Controller
+    public class UserLibraryController : PaginationController
     {
         private readonly ApplicationDbContext _context;
 
@@ -18,9 +18,12 @@ namespace Serwis_Książkowy.Controllers
         }
 
         // GET: UserLibrary
-        public ActionResult Index()
+        public ActionResult Index(int page = 1, int pageSize = 10)
         {
-            var books = BookQueryHelper.GetUserBooks(_context, User);
+            var results = BookQueryHelper.GetUserBooks(_context, User, page, pageSize);
+            IQueryable<BookViewModel> books = results.Books;
+            int totalPages = results.TotalPages;
+            SetPaginationData(page, totalPages);
             return View(books);
         }
 
@@ -77,7 +80,7 @@ namespace Serwis_Książkowy.Controllers
             if (bookInLibrary != null) _context.UserLibraries.Remove(bookInLibrary); 
             _context.SaveChanges();
 
-            string referer = Request.Headers["Referer"].ToString();
+            string referer = Request.Headers["Referer"].ToString().Split('?')[0];
             return Redirect(referer);
         }
     }
