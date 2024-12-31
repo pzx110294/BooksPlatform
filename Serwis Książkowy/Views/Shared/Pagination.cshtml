@@ -1,0 +1,18 @@
+﻿<div>
+    @{
+        int previousPage = (int)ViewData["PreviousPage"];
+        int nextPage = (int)ViewData["NextPage"];
+        int totalPages = (int)ViewData["TotalPages"];
+        int currentPage = (int)ViewData["CurrentPage"];
+    }
+    <form method="get">
+        @if (currentPage > 1)
+        {
+            <button type="submit" name="page" value=@previousPage>Previous Page</button>
+        }
+        @if (currentPage < totalPages)
+        {
+            <button type="submit" name="page" value=@nextPage>Next Page</button>
+        }
+    </form>
+</div>
