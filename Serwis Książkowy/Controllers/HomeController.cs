@@ -29,6 +29,7 @@ namespace Serwis_Książkowy.Controllers
             IQueryable<BookViewModel> bookViewModel = results.Books;
             int totalPages = results.TotalPages;
             SetPaginationData(page, totalPages);
+            ViewData["SearchQuery"] = searchQuery;
             return View(bookViewModel);
         }
         

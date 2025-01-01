@@ -1,18 +1,24 @@
 ﻿<div>
     @{
-        int previousPage = (int)ViewData["PreviousPage"];
-        int nextPage = (int)ViewData["NextPage"];
-        int totalPages = (int)ViewData["TotalPages"];
-        int currentPage = (int)ViewData["CurrentPage"];
+        string searchQuery = ViewData["SearchQuery"]?.ToString() ?? String.Empty;
+        string previousPage = ViewData["PreviousPage"]?.ToString()?? String.Empty;
+        string nextPage = ViewData["NextPage"]?.ToString() ?? String.Empty;
+        
+        int totalPages = (int)(ViewData["TotalPages"] ?? 0);
+        int currentPage = (int)(ViewData["CurrentPage"] ?? 0);
+        
     }
     <form method="get">
+        @if (!String.IsNullOrEmpty(searchQuery)){
+            <input type="hidden" name="searchQuery" value=@searchQuery />
+        }
         @if (currentPage > 1)
         {
-            <button type="submit" name="page" value=@previousPage>Previous Page</button>
+            <button type="submit" name="page" value=@previousPage >Previous Page</button>
         }
         @if (currentPage < totalPages)
         {
-            <button type="submit" name="page" value=@nextPage>Next Page</button>
+            <button type="submit" name="page" value=@nextPage >Next Page</button>
         }
     </form>
 </div>
