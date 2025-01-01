@@ -25,10 +25,9 @@ namespace Serwis_Książkowy.Controllers
             
             var results = BookQueryHelper.GetBestRatedBooks(_context, page, pageSize, userId);
             IQueryable<BookViewModel> bookViewModel = results.Books;
-            int totalPages = results.TotalPages;
             
             ViewData["Header"] = "Best rated books";
-            SetPaginationData(page, totalPages);
+            SetPaginationData(page, results.TotalPages);
             return View(bookViewModel);
         }
 

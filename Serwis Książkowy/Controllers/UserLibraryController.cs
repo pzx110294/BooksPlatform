@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Serwis_Książkowy.Data;
 using Serwis_Książkowy.Helpers;
 using Serwis_Książkowy.Models;
@@ -24,6 +25,8 @@ namespace Serwis_Książkowy.Controllers
             IQueryable<BookViewModel> books = results.Books;
             int totalPages = results.TotalPages;
             SetPaginationData(page, totalPages);
+            string emptyLibrary = books.IsNullOrEmpty() ? " is empty" : String.Empty;
+            ViewData["Header"] = "Your library" + emptyLibrary;
             return View(books);
         }
 

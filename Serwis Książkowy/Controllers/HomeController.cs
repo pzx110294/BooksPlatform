@@ -30,6 +30,7 @@ namespace Serwis_Książkowy.Controllers
             int totalPages = results.TotalPages;
             SetPaginationData(page, totalPages);
             ViewData["SearchQuery"] = searchQuery;
+            ViewData["Header"] = $"Search results for \"{searchQuery}\"";
             return View(bookViewModel);
         }
         

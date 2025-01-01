@@ -1,6 +1,5 @@
 ﻿@model IQueryable<Serwis_Książkowy.ViewModels.BookViewModel>
 
-<h1>@ViewData["Header"]</h1>
 @foreach (var obj in Model)
 {
     <partial name="Book" model="obj"/><br/>
