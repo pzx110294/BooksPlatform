@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Serwis_Książkowy.Data;
 using Serwis_Książkowy.Helpers;
+using Serwis_Książkowy.Models;
 
 namespace Serwis_Książkowy.Controllers
 {
@@ -23,6 +24,23 @@ namespace Serwis_Książkowy.Controllers
             return View(results.Books);
         }
 
-    
+        [HttpPost]
+        public IActionResult Follow(int authorId)
+        {
+            string userId = User.GetUserId();
+            if (String.IsNullOrEmpty(userId)) return NotFound();
+
+            FavouriteAuthor favouriteAuthor = new FavouriteAuthor
+            {
+                AuthorId = authorId,
+                UserId = userId
+            };
+            _context.FavouriteAuthors.Add(favouriteAuthor);
+            _context.SaveChanges();
+            
+            string referer = Request.Headers["Referer"].ToString();
+            return Redirect(referer);
+        }
+        
     }
 }
