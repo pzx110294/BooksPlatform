@@ -9,7 +9,8 @@ namespace Serwis_Książkowy.Helpers;
 
 public static class BookQueryHelper
 {
-    public static (IQueryable<BookViewModel> Books, int TotalPages) GetBestRatedBooks(ApplicationDbContext context, int page, int pageSize, string? userId = null)
+    public static (IQueryable<BookViewModel> Books, int TotalPages) GetBestRatedBooks(
+        ApplicationDbContext context, int page, int pageSize, string? userId = null)
     {
         IQueryable<Book> query = context.Books;
         int totalPages = GetTotalPages(query, pageSize); 
@@ -25,7 +26,8 @@ public static class BookQueryHelper
         return (books, totalPages);
     }
 
-    public static (IQueryable<BookViewModel> Books, int TotalPages) GetSearchedBooks(ApplicationDbContext context, string searchQuery, int page, int pageSize,
+    public static (IQueryable<BookViewModel> Books, int TotalPages) GetSearchedBooks(
+        ApplicationDbContext context, string searchQuery, int page, int pageSize,
         string? userId = null)
     {
         IQueryable<Book> query = context.Books
@@ -45,7 +47,8 @@ public static class BookQueryHelper
             .Take(pageSize);
         return (books, totalPages);
     }
-    public static (IQueryable<BookViewModel> Books, int TotalPages) GetUserBooks(ApplicationDbContext context, ClaimsPrincipal User, int page, int pageSize)
+    public static (IQueryable<BookViewModel> Books, int TotalPages) GetUserBooks(
+        ApplicationDbContext context, ClaimsPrincipal User, int page, int pageSize)
     {
         string userId = User.GetUserId();
 
@@ -63,7 +66,21 @@ public static class BookQueryHelper
             .Take(pageSize);
         
         return (books, totalPages);
+    }
 
+    public static (IQueryable<BookViewModel> Books, int TotalPages) GetAuthorBooks(
+        ApplicationDbContext context, int authorId, int page, int pageSize, string? userId = null)
+    {
+        IQueryable<Book> query = context.Books.Where(b => b.AuthorId == authorId);
+        int totalPages = GetTotalPages(query, pageSize);
+
+        IQueryable<BookViewModel> books = query
+            .Include(a => a.Author)
+            .Include(l => l.UserLibraries)
+            .Select(book => MapToBookViewModel(book, userId))
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize);
+        return (books, totalPages);
     }
     private static int GetTotalPages<T>(IQueryable<T> dbSet, int pageSize) where T : class
     {
