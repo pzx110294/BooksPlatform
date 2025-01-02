@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serwis_Książkowy.Data;
+using Serwis_Książkowy.Helpers;
 using Serwis_Książkowy.Models;
 
 namespace Serwis_Książkowy
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,7 @@ namespace Serwis_Książkowy
                     options.Password.RequireNonAlphanumeric = false;
                     options.Password.RequiredLength = 3;
                 })
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             
             var app = builder.Build();
@@ -62,6 +64,11 @@ namespace Serwis_Książkowy
 
             app.MapRazorPages();
             app.Services.CreateScope();
+            using (var scope = app.Services.CreateScope())
+            {
+                await UserHelper.CreateRoles(scope);
+                await UserHelper.UserManager(scope);
+            }
             app.Run();
         }
     }
