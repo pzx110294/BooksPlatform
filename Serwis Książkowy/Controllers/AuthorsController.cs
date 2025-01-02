@@ -38,14 +38,16 @@ namespace Serwis_Książkowy.Controllers
         [HttpPost]
         public IActionResult Follow(int authorId)
         {
+            string referer = Request.Headers["Referer"].ToString();
+            
             string userId = User.GetUserId();
-            if (String.IsNullOrEmpty(userId)) return NotFound();
+            if (String.IsNullOrEmpty(userId)) return Redirect(referer);
 
             bool isAlreadyFavourited =
                 _context.FavouriteAuthors.Any(fa => fa.UserId == userId && fa.AuthorId == authorId);
-            if (!isAlreadyFavourited)
+            if (isAlreadyFavourited)
             {
-                return NotFound();
+                return Redirect(referer);
             }
             FavouriteAuthor favouriteAuthor = new FavouriteAuthor
             {
@@ -55,7 +57,7 @@ namespace Serwis_Książkowy.Controllers
             _context.FavouriteAuthors.Add(favouriteAuthor);
             _context.SaveChanges();
             
-            string referer = Request.Headers["Referer"].ToString();
+            
             return Redirect(referer);
         }
         public IActionResult Unfollow(int authorId)
