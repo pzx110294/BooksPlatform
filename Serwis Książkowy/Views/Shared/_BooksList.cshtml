@@ -1,7 +1,6 @@
-﻿@model IQueryable<Serwis_Książkowy.ViewModels.BookViewModel>
+﻿@model IEnumerable<BookViewModel>
 
 @foreach (var book in Model)
 {
     <partial name="Book" model="book"/><br/>
 }
-<partial name="Pagination" />

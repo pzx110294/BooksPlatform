@@ -3,5 +3,5 @@
 public class AuthorBookViewModel
 {
     public AuthorViewModel AuthorViewModel { get; set; }
-    public IQueryable<BookViewModel> BookViewModel { get; set; }
+    public IEnumerable<BookViewModel> BookViewModel { get; set; }
 }

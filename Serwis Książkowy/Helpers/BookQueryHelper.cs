@@ -89,12 +89,39 @@ public static class BookQueryHelper
         return (int)Math.Ceiling((float) totalBooks/ pageSize);
     }
 
+    public static (IEnumerable<AuthorBookViewModel> authors, int TotalPages) GetRecentBooksFromFavouriteAuthors(ApplicationDbContext context, string userId, int page, int pageSize)
+    {
+        IQueryable<FavouriteAuthor> query = context.FavouriteAuthors
+            .Where(fa => fa.UserId == userId);
+        int totalPages = GetTotalPages(query, pageSize);
+        
+        var authors = query
+            .Select(a => new AuthorBookViewModel
+            {
+                AuthorViewModel = new AuthorViewModel
+                {
+                    Author = a.Author,
+                    IsFollowed = true
+                },
+                BookViewModel = context.Books
+                    .Where(book => book.AuthorId == a.Author.AuthorId && book.PublicationDate <= DateTime.Today.AddDays(-30))
+                    .Include(ul => ul.UserLibraries)
+                    .Select(b => BookQueryHelper.MapToBookViewModel(b, userId))
+                    .Take(1)
+                    .ToList()
+            })
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+        return (authors, totalPages);
+    }
+
     private static BookViewModel MapToBookViewModel(Book book, string? userId)
     {
         return new BookViewModel
         {
             Book = book,
-            IsInLibrary = userId != null && book.UserLibraries.Any(),
+            IsInLibrary = userId != null && book.UserLibraries.Any(u => u.UserId == userId),
             Status = userId != null
                 ? book.UserLibraries
                     .Where(u => u.UserId == userId)

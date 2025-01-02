@@ -73,19 +73,17 @@ namespace Serwis_Książkowy.Controllers
             return Redirect(referer);
         }
 
-        public IActionResult FollowedAuthors()
+        public IActionResult FollowedAuthors(int page = 1, int pageSize = 10)
         {
             string userId = User.GetUserId();
-            IQueryable<AuthorViewModel> favouriteAuthors = _context.FavouriteAuthors
-                .Where(u => u.UserId == userId)
-                .Select(a => new AuthorViewModel
-                {
-                    Author = a.Author,
-                    IsFollowed = true
-                });
+
+            var results = BookQueryHelper.GetRecentBooksFromFavouriteAuthors(_context, userId, page, pageSize);
             
-            return View(favouriteAuthors);
+            SetPaginationData(page, results.TotalPages);
+            ViewData["Header"] = "Recent books by followed authors";
+            return View(results.authors);
         }
 
     }
 }
+

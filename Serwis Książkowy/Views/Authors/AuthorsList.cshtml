@@ -1,11 +1,18 @@
-﻿@model IQueryable<AuthorViewModel>
+﻿@model IEnumerable<AuthorBookViewModel>
 
 @foreach (var author in Model)
 {
     <div>
-        <partial name="Author" model="author.Author" />
-        
-        <partial name="Follow" model="author" /><br/>
+        <div class="row">
+            <div class="col">
+                <partial name="Author" model="author.AuthorViewModel.Author"/>
+            </div>
+            <div class="col">
+                <partial name="Follow" model="author.AuthorViewModel"/>
+            </div>
+                
+        </div>
+        <partial name="_BooksList" model="author.BookViewModel"/><br/>
     </div>
 }
 <partial name="Pagination" />
