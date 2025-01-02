@@ -1,8 +1,20 @@
-﻿@model IQueryable<Serwis_Książkowy.ViewModels.BookViewModel>
-
-<div>
-    <form asp-controller="Authors" asp-action="Follow" method="post">
-        <input type="hidden" name="authorId" value="@Model.First().Book.AuthorId"/>
-        <button type="submit">Follow</button>
-    </form>
-</div>
+﻿@model AuthorViewModel
+@if (User.Identity.IsAuthenticated)
+{
+    <div>
+        @if (Model.IsFollowed)
+        {
+            <form asp-controller="Authors" asp-action="Unfollow" method="post">
+                <input type="hidden" name="authorId" value="@Model.Author.AuthorId"/>
+                <button type="submit">Unfollow</button>
+            </form>
+        }
+        else
+        {
+            <form asp-controller="Authors" asp-action="Follow" method="post">
+                <input type="hidden" name="authorId" value="@Model.Author.AuthorId"/>
+                <button type="submit">Follow</button>
+            </form>
+        }
+    </div>
+}

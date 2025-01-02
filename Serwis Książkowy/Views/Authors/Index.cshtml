@@ -1,5 +1,7 @@
-﻿<partial name="Header"/>
+﻿@model Serwis_Książkowy.ViewModels.AuthorBookViewModel
 
-<partial name="Follow" />
+<partial name="Header"/>
 
-<partial name="_BooksList"/>
+<partial name="Follow" model="Model.AuthorViewModel"/><br/>
+
+<partial name="_BooksList" model="Model.BookViewModel"/>

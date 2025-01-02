@@ -48,10 +48,8 @@ public static class BookQueryHelper
         return (books, totalPages);
     }
     public static (IQueryable<BookViewModel> Books, int TotalPages) GetUserBooks(
-        ApplicationDbContext context, ClaimsPrincipal User, int page, int pageSize)
+        ApplicationDbContext context, string userId, int page, int pageSize)
     {
-        string userId = User.GetUserId();
-
         IQueryable<UserLibrary> query = context.UserLibraries
             .Where(u => u.UserId == userId);
         
@@ -68,7 +66,7 @@ public static class BookQueryHelper
         return (books, totalPages);
     }
 
-    public static (IQueryable<BookViewModel> Books, int TotalPages) GetAuthorBooks(
+    public static (IQueryable<BookViewModel> Books, int TotalPages, bool isFollowed) GetAuthorBooks(
         ApplicationDbContext context, int authorId, int page, int pageSize, string? userId = null)
     {
         IQueryable<Book> query = context.Books.Where(b => b.AuthorId == authorId);
@@ -80,7 +78,10 @@ public static class BookQueryHelper
             .Select(book => MapToBookViewModel(book, userId))
             .Skip((page - 1) * pageSize)
             .Take(pageSize);
-        return (books, totalPages);
+
+        bool isFollowed = context.FavouriteAuthors.Any(u => u.UserId == userId && u.AuthorId == authorId);
+        
+        return (books, totalPages, isFollowed);
     }
     private static int GetTotalPages<T>(IQueryable<T> dbSet, int pageSize) where T : class
     {
@@ -102,6 +103,4 @@ public static class BookQueryHelper
                 : Status.Completed
         };
     }
-
-    
 }

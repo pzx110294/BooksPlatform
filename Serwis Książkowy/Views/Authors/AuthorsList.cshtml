@@ -1,0 +1,11 @@
+﻿@model IQueryable<AuthorViewModel>
+
+@foreach (var author in Model)
+{
+    <div>
+        <partial name="Author" model="author.Author" />
+        
+        <partial name="Follow" model="author" /><br/>
+    </div>
+}
+<partial name="Pagination" />
