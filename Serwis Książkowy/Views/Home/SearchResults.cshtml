@@ -1,0 +1,33 @@
+﻿@model AuthorBookSearchResultsView
+
+<partial name="Header"/>
+
+@if (Model.BookViewModels != null && Model.BookViewModels.Any())
+{
+    <div>
+        @foreach (var book in Model.BookViewModels)
+        {
+            <div>
+                <partial name="Book" model="book"/>
+            </div>
+        }
+    </div>
+}
+
+@if (Model.AuthorViewModels != null && Model.AuthorViewModels.Any())
+{
+    <h3>Authors</h3>
+    <div>
+        @foreach (var author in Model.AuthorViewModels)
+        {
+            <partial name="Author" model="author.Author"/>
+            <partial name="Follow" model="author"/>
+        }
+    </div>
+}
+
+@if (Model.BookViewModels == null && Model.AuthorViewModels == null)
+{
+    <p>No results found.</p>
+}
+<partial name="Pagination"/>

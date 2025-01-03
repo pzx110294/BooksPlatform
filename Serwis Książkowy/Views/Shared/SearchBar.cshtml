@@ -1,4 +1,8 @@
 ﻿<form id="form" method="get" asp-action="Search" asp-controller="Home">
+    <select name="searchType">
+        <option value="book">Book</option>
+        <option value="author">Author</option>
+    </select>
     <input type="search" name="searchQuery" placeholder="Search...">
     <button type="submit">Search</button>
 </form>

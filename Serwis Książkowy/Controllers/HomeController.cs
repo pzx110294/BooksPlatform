@@ -16,8 +16,7 @@ namespace Serwis_Książkowy.Controllers
             _context = dbContext;
         }
 
-    
-        public IActionResult Search(string searchQuery, int page = 1, int pageSize = 10)
+        public IActionResult Search(string searchQuery, string searchType, int page = 1, int pageSize = 10)
         {
             if (String.IsNullOrEmpty(searchQuery))
             {
@@ -26,15 +25,38 @@ namespace Serwis_Książkowy.Controllers
             page = page < 1 ? 1 : page;
 
             string userId = User.GetUserId();
-            var results = BookQueryHelper.GetSearchedBooks(_context, searchQuery, page, pageSize, userId);
-            IQueryable<BookViewModel> bookViewModel = results.Books;
-            int totalPages = results.TotalPages;
+            IQueryable<BookViewModel> bookResults = null;
+            IQueryable<AuthorViewModel> authorResults = null;
+            int totalPages = 0;
+
+            if (searchType == "book")
+            {
+                var results = BookQueryHelper.GetSearchedBooks(_context, searchQuery, page, pageSize, userId);
+                bookResults = results.Books;
+                totalPages = results.TotalPages;
+                ViewData["Header"] = $"Search results for books: \"{searchQuery}\"";
+            }
+            else if (searchType == "author")
+            {
+                var results = BookQueryHelper.GetSearchedAuthors(_context, searchQuery, page, pageSize, userId);
+                authorResults = results.Authors;
+                totalPages = results.TotalPages;
+                ViewData["Header"] = $"Search results for authors: \"{searchQuery}\"";
+            }
+
             SetPaginationData(page, totalPages);
             ViewData["SearchQuery"] = searchQuery;
-            ViewData["Header"] = $"Search results for \"{searchQuery}\"";
-            return View(bookViewModel);
+            ViewData["SearchType"] = searchType;
+
+            var searchView = new AuthorBookSearchResultsView
+            {
+                AuthorViewModels = authorResults,
+                BookViewModels = bookResults
+            };
+            
+            return View("SearchResults", searchView);
+            
         }
-        
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

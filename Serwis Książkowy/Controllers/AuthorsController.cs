@@ -26,16 +26,18 @@ namespace Serwis_Książkowy.Controllers
             string userId = User.GetUserId();
             var results = BookQueryHelper.GetAuthorBooks(_context, authorId, page, pageSize, userId);
 
-            if (!results.Books.Any())
+            var author = _context.Authors.FirstOrDefault(a => a.AuthorId == authorId);
+            if (author == null)
             {
                 return NotFound();
             }
+        
             SetPaginationData(page, results.TotalPages);
-            ViewData["Header"] = "Books by " + results.Books.FirstOrDefault()?.Book.Author.Name;
+            ViewData["Header"] = "Books by " + author.Name;
 
             AuthorViewModel authorViewModel = new AuthorViewModel
             {
-                Author = results.Books.FirstOrDefault().Book.Author,
+                Author = author,
                 IsFollowed = results.isFollowed
             };
             AuthorBookViewModel viewModel = new AuthorBookViewModel

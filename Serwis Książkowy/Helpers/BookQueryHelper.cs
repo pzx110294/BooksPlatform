@@ -33,7 +33,6 @@ public static class BookQueryHelper
     {
         IQueryable<Book> query = context.Books
             .Where(b =>
-            b.Author.Name.Contains(searchQuery) ||
             b.Title.Contains(searchQuery) ||
             b.Isbn == searchQuery);
         
@@ -48,6 +47,26 @@ public static class BookQueryHelper
             .Skip((page - 1) * pageSize)
             .Take(pageSize);
         return (books, totalPages);
+    }
+    public static (IQueryable<AuthorViewModel> Authors, int TotalPages) GetSearchedAuthors(
+        ApplicationDbContext context, string searchQuery, int page, int pageSize,
+        string? userId = null)
+    {
+        IQueryable<Author> query = context.Authors
+            .Where(a => a.Name.Contains(searchQuery));
+    
+        int totalPages = GetTotalPages(query, pageSize);
+    
+        var authors = query
+            .Select(author => new AuthorViewModel
+            {
+                Author = author,
+                IsFollowed = userId != null && context.FavouriteAuthors.Any(fa => fa.UserId == userId && fa.AuthorId == author.AuthorId)
+            })
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize);
+    
+        return (authors, totalPages);
     }
     public static (IQueryable<BookViewModel> Books, int TotalPages) GetUserBooks(
         ApplicationDbContext context, string userId, int page, int pageSize)
@@ -107,9 +126,10 @@ public static class BookQueryHelper
                     IsFollowed = true
                 },
                 BookViewModel = context.Books
-                    .Where(book => book.AuthorId == a.Author.AuthorId && book.PublicationDate >= DateTime.Today.AddDays(-30))
+                    .Where(book => book.AuthorId == a.Author.AuthorId)
                     .Include(ul => ul.UserLibraries)
                     .Include(g => g.Genre)
+                    .OrderByDescending(b => b.PublicationDate)
                     .Select(b => BookQueryHelper.MapToBookViewModel(b, userId))
                     .Take(1)
                     .ToList()
