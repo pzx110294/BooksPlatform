@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Serwis_Książkowy.Data;
+using Serwis_Książkowy.Helpers;
 using Serwis_Książkowy.Models;
+using Serwis_Książkowy.ViewModels;
 
 namespace Serwis_Książkowy.Controllers
 {
-    public class GenresController : Controller
+    public class GenresController : PaginationController
     {
         private readonly ApplicationDbContext _context;
 
@@ -20,13 +22,24 @@ namespace Serwis_Książkowy.Controllers
             _context = context;
         }
 
+        public IActionResult ListBooksByGenre(int genreId, int page = 1, int pageSize = 10)
+        {
+            page = page < 1 ? 1 : page;
+            var userId = User.GetUserId();
+            var results = BookQueryHelper.GetGenreBooks(_context, genreId, userId, page, pageSize);
+            IQueryable<BookViewModel> books = results.Books;
+            int totalPages = results.TotalPages;
+            SetPaginationData(page, totalPages);
+
+            ViewData["Header"] = _context.Genres.Find(genreId).Name;
+            return View(books);
+        }
         // GET: Genres
         [Authorize (Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Genres.ToListAsync());
         }
-
         // GET: Genres/Details/5
         [Authorize (Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)

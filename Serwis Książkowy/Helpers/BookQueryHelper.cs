@@ -159,4 +159,24 @@ public static class BookQueryHelper
     {
         return context.Books.Any(b => b.Isbn == isbn);
     }
+
+    public static (IQueryable<BookViewModel> Books, int TotalPages) GetGenreBooks(ApplicationDbContext context,
+        int genreId, string userId, int page, int pageSize)
+    {
+        IQueryable<Book> query = context.Books
+            .Where(u => u.GenreId == genreId);
+        
+        int totalPages = GetTotalPages(query, pageSize);
+        
+        IQueryable<BookViewModel> books = query
+            .Include(a => a.Author)
+            .Include(g => g.Genre)
+            .Include(l => l.UserLibraries.Where(u => u.UserId == userId))
+            .OrderByDescending(b => b.Rating)
+            .Select(book => MapToBookViewModel(book, userId))
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize);
+
+        return (books, totalPages);
+    }
 }
