@@ -73,14 +73,17 @@ public static class DatasetLoader
     {
         var bookTitle = record.Title.Trim();
         if (CheckIfBookExists(bookTitle)) return;
-        
+        List<Genre> genres = _dbContext.Genres.ToList();
+        Random random = new();
+        Genre randomGenre = genres[random.Next(genres.Count)];
         _dbContext.Books.Add(new Book
         {
             Title = bookTitle,
             Author = author,
             PublicationDate = record.PublicationDate,
             Isbn = record.ISBN13,
-            Rating = record.AverageRating
+            Rating = record.AverageRating,
+            Genre = randomGenre
         });
     }
 

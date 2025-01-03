@@ -17,6 +17,7 @@ public static class BookQueryHelper
             
         var books = query
             .Include(a => a.Author)
+            .Include(g => g.Genre)
             .Include(l => l.UserLibraries.Where(u => u.UserId == userId))
             .OrderByDescending(b => b.Rating)
             .Select(book => MapToBookViewModel(book, userId))

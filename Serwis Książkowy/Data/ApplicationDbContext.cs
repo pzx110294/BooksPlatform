@@ -21,5 +21,21 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.ConfigureModel();
+        AddGenres(modelBuilder);
+        
+    }
+    private void AddGenres(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Genre>().HasData(
+            new Genre { GenreId = 1, Name = "Fiction" },
+            new Genre { GenreId = 2, Name = "Non-Fiction" },
+            new Genre { GenreId = 3, Name = "Science Fiction" },
+            new Genre { GenreId = 4, Name = "Mystery" },
+            new Genre { GenreId = 5, Name = "Thriller" },
+            new Genre { GenreId = 6, Name = "Romance" },
+            new Genre { GenreId = 7, Name = "Fantasy" },
+            new Genre { GenreId = 8, Name = "Biography" },
+            new Genre { GenreId = 9, Name = "History" }
+        );
     }
 }

@@ -7,7 +7,7 @@
         string coverUrl = "https://covers.openlibrary.org/b/isbn/" + Model.Book.Isbn + "-S.jpg";
         <img src=@coverUrl />
     }
-    @Model.Book.Title | <a asp-controller="Authors" asp-action="Index" asp-route-authorId="@Model.Book.AuthorId">@Model.Book.Author.Name</a> | @Model.Book.Rating
+    @Model.Book.Title | <a asp-controller="Authors" asp-action="Index" asp-route-authorId="@Model.Book.AuthorId">@Model.Book.Author.Name</a> | @Model.Book.Genre.Name | @Model.Book.Rating
     @if (User.Identity.IsAuthenticated)
     {
         if (Model.IsInLibrary)
