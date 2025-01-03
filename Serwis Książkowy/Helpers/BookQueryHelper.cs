@@ -108,7 +108,7 @@ public static class BookQueryHelper
                     IsFollowed = true
                 },
                 BookViewModel = context.Books
-                    .Where(book => book.AuthorId == a.Author.AuthorId && book.PublicationDate <= DateTime.Today.AddDays(-30))
+                    .Where(book => book.AuthorId == a.Author.AuthorId && book.PublicationDate >= DateTime.Today.AddDays(-30))
                     .Include(ul => ul.UserLibraries)
                     .Include(g => g.Genre)
                     .Select(b => BookQueryHelper.MapToBookViewModel(b, userId))
