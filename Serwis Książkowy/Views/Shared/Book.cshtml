@@ -1,20 +1,22 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@using Serwis_Książkowy.Helpers
 @model BookViewModel
 
 <div>
     @{
         string coverUrl = "https://covers.openlibrary.org/b/isbn/" + Model.Book.Isbn + "-S.jpg";
-        <img src=@coverUrl />
+        <a asp-controller="Books" asp-action="Details" asp-route-id="@Model.Book.BookId"><img src=@coverUrl /></a>
     }
-    @Model.Book.Title | <a asp-controller="Authors" asp-action="Index" asp-route-authorId="@Model.Book.AuthorId">@Model.Book.Author.Name</a> | @Model.Book.Genre.Name | @Model.Book.Rating
+    <a asp-controller="Books" asp-action="Details" asp-route-id="@Model.Book.BookId">@Model.Book.Title</a> | <a asp-controller="Authors" asp-action="Index" asp-route-authorId="@Model.Book.AuthorId">@Model.Book.Author.Name</a> | @Model.Book.Genre.Name | @Model.Book.Rating
     @if (User.Identity.IsAuthenticated)
     {
         if (Model.IsInLibrary)
         {
             <partial name="InLibrary" model="Model"></partial>
         }
-
         <partial name="AddToLibrary" model="Model.Book"/>
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-controller="Books" asp-action="Edit" asp-route-id="@Model.Book.BookId">Edit</a>
+        }
     }
 </div>

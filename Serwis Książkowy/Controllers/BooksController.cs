@@ -78,6 +78,10 @@ namespace Serwis_Książkowy.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "A book with this ISBN already exists.");
+                }
             }
             else
             {
@@ -112,8 +116,8 @@ namespace Serwis_Książkowy.Controllers
             {
                 return NotFound();
             }
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorId", book.AuthorId);
-            ViewData["GenreId"] = new SelectList(_context.Genres, "GenreId", "GenreId", book.GenreId);
+            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "Name", book.AuthorId);
+            ViewData["GenreId"] = new SelectList(_context.Genres, "GenreId", "Name", book.GenreId);
             return View(book);
         }
 
@@ -150,8 +154,8 @@ namespace Serwis_Książkowy.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorId", book.AuthorId);
-            ViewData["GenreId"] = new SelectList(_context.Genres, "GenreId", "GenreId", book.GenreId);
+            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "Name", book.AuthorId);
+            ViewData["GenreId"] = new SelectList(_context.Genres, "GenreId", "Name", book.GenreId);
             return View(book);
         }
 

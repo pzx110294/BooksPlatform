@@ -3,7 +3,12 @@
 @{
     ViewData["Title"] = "Edit";
 }
-
+<div class="row">
+    @{
+    string coverUrl = "https://covers.openlibrary.org/b/isbn/" + Model.Isbn + "-M.jpg";
+    }
+    <img width="50%" height="10%" src=@coverUrl />
+</div>
 <h1>Edit</h1>
 
 <h4>Book</h4>
@@ -47,6 +52,7 @@
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
+        <a asp-controller="Books" asp-action="Delete" asp-route-id="@Model.BookId"><button class="btn btn-danger">Delete</button></a>
     </div>
 </div>
 
