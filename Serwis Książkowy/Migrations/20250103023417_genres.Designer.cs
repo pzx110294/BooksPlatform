@@ -12,8 +12,8 @@ using Serwis_Książkowy.Data;
 namespace Serwis_Książkowy.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250103004526_add genres")]
-    partial class addgenres
+    [Migration("20250103023417_genres")]
+    partial class genres
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

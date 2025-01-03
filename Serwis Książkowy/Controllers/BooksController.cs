@@ -54,10 +54,11 @@ namespace Serwis_Książkowy.Controllers
         }
 
         // GET: Books/Create
+        [Authorize (Roles = "Admin")]
         public IActionResult Create()
         {
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorId");
-            ViewData["GenreId"] = new SelectList(_context.Genres, "GenreId", "GenreId");
+            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "Name");
+            ViewData["GenreId"] = new SelectList(_context.Genres, "GenreId", "Name");
             return View();
         }
 
@@ -66,20 +67,39 @@ namespace Serwis_Książkowy.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize (Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("BookId,Isbn,Title,AuthorId,GenreId,PublicationDate,Rating")] Book book)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(book);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (!BookQueryHelper.BookExists(book.Isbn, _context))
+                {
+                    _context.Add(book);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "AuthorId", book.AuthorId);
-            ViewData["GenreId"] = new SelectList(_context.Genres, "GenreId", "GenreId", book.GenreId);
+            else
+            {
+                // Log ModelState errors for debugging
+                foreach (var key in ModelState.Keys)
+                {
+                    var state = ModelState[key];
+                    if (state.Errors.Any())
+                    {
+                        var errors = state.Errors.Select(e => e.ErrorMessage);
+                        Console.WriteLine($"Key: {key}, Errors: {string.Join(", ", errors)}");
+                    }
+                }
+            }
+            ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "Name", book.AuthorId);
+            ViewData["GenreId"] = new SelectList(_context.Genres, "GenreId", "Name", book.GenreId);
             return View(book);
         }
+        
 
         // GET: Books/Edit/5
+        [Authorize (Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -102,6 +122,7 @@ namespace Serwis_Książkowy.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize (Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("BookId,Isbn,Title,AuthorId,GenreId,PublicationDate,Rating")] Book book)
         {
             if (id != book.BookId)
@@ -135,6 +156,7 @@ namespace Serwis_Książkowy.Controllers
         }
 
         // GET: Books/Delete/5
+        [Authorize (Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -157,6 +179,7 @@ namespace Serwis_Książkowy.Controllers
         // POST: Books/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize (Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var book = await _context.Books.FindAsync(id);

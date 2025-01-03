@@ -24,12 +24,18 @@
                         </li>
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="UserLibrary" asp-action="Index">Your Library</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Authors" asp-action="FollowedAuthors">Followed Authors</a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="UserLibrary" asp-action="Index">Your Library</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Authors" asp-action="FollowedAuthors">Followed Authors</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Books" asp-action="Create">Add Book</a>
+                            </li>
                         }
                         
                     </ul>

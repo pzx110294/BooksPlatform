@@ -41,6 +41,7 @@ public static class BookQueryHelper
         
         var books = query
             .Include(a => a.Author)
+            .Include(g => g.Genre)
             .Include(l => l.UserLibraries.Where(u => u.UserId == userId))
             .OrderByDescending(b => b.Rating)
             .Select(book => MapToBookViewModel(book, userId))
@@ -59,6 +60,7 @@ public static class BookQueryHelper
         IQueryable<BookViewModel> books = query
             .Include(b => b.Book)
             .ThenInclude(b => b.UserLibraries.Where(u => u.UserId == userId))
+            .Include(g => g.Book.Genre)
             .Include(a => a.Book.Author)
             .Select(book => MapToBookViewModel(book.Book, userId))
             .Skip((page - 1) * pageSize)
@@ -76,6 +78,7 @@ public static class BookQueryHelper
         IQueryable<BookViewModel> books = query
             .Include(a => a.Author)
             .Include(l => l.UserLibraries)
+            .Include(g => g.Genre)
             .Select(book => MapToBookViewModel(book, userId))
             .Skip((page - 1) * pageSize)
             .Take(pageSize);
@@ -107,6 +110,7 @@ public static class BookQueryHelper
                 BookViewModel = context.Books
                     .Where(book => book.AuthorId == a.Author.AuthorId && book.PublicationDate <= DateTime.Today.AddDays(-30))
                     .Include(ul => ul.UserLibraries)
+                    .Include(g => g.Genre)
                     .Select(b => BookQueryHelper.MapToBookViewModel(b, userId))
                     .Take(1)
                     .ToList()
@@ -130,5 +134,10 @@ public static class BookQueryHelper
                     .FirstOrDefault()
                 : Status.Completed
         };
+    }
+
+    public static bool BookExists(string isbn, ApplicationDbContext context)
+    {
+        return context.Books.Any(b => b.Isbn == isbn);
     }
 }
