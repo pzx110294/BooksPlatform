@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Serwis_Książkowy.Data;
 using Serwis_Książkowy.Helpers;
 using Serwis_Książkowy.Models;
@@ -16,9 +18,17 @@ namespace Serwis_Książkowy.Controllers
         }
         public ActionResult Index(int authorId, int page = 1, int pageSize = 10)
         {
+            if (authorId == 0)
+            {
+                return NotFound();
+            }
             string userId = User.GetUserId();
             var results = BookQueryHelper.GetAuthorBooks(_context, authorId, page, pageSize, userId);
 
+            if (!results.Books.Any())
+            {
+                return NotFound();
+            }
             SetPaginationData(page, results.TotalPages);
             ViewData["Header"] = "Books by " + results.Books.FirstOrDefault()?.Book.Author.Name;
 
@@ -84,6 +94,158 @@ namespace Serwis_Książkowy.Controllers
             return View(results.authors);
         }
 
+        // GET: Authors/Create
+        [Authorize (Roles = "Admin")]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: Authors/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize (Roles = "Admin")]
+        public async Task<IActionResult> Create([Bind("AuthorId,Name")] Author author)
+        {
+            if (ModelState.IsValid)
+            {
+                if (!AuthorExists(author.Name))
+                {
+                    _context.Add(author);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index), "Books");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Author with this name already exists.");
+                }
+            }
+            return View(author);
+        }
+
+        
+
+        // GET: Authors/Details/5
+        [Authorize (Roles = "Admin")]
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var author = await _context.Authors
+                .FirstOrDefaultAsync(m => m.AuthorId == id);
+            if (author == null)
+            {
+                return NotFound();
+            }
+
+            return View(author);
+        }
+
+        // GET: Authors/Edit/5
+        [Authorize (Roles = "Admin")]
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var author = await _context.Authors.FindAsync(id);
+            if (author == null)
+            {
+                return NotFound();
+            }
+            return View(author);
+        }
+
+        // POST: Authors/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize (Roles = "Admin")]
+        public async Task<IActionResult> Edit(int id, [Bind("AuthorId,Name")] Author author)
+        {
+            if (id != author.AuthorId)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (!AuthorExists(author.Name))
+                    {
+                        _context.Update(author);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Author with this name already exists.");
+                        return View(author);
+                    }
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!AuthorExists(author.AuthorId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index), new {authorId = author.AuthorId});
+            }
+            return View(author);
+        }
+
+        private bool AuthorExists(int id)
+        {
+            return _context.Authors.Any(e => e.AuthorId == id);
+        }
+        private bool AuthorExists(string authorName)
+        {
+            return _context.Authors.Any(e => e.Name == authorName);
+        }
+        
+        // GET: Authors/Delete/5
+        [Authorize (Roles = "Admin")]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var author = await _context.Authors
+                .FirstOrDefaultAsync(m => m.AuthorId == id);
+            if (author == null)
+            {
+                return NotFound();
+            }
+
+            return View(author);
+        }
+
+        // POST: Authors/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize (Roles = "Admin")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var author = await _context.Authors.FindAsync(id);
+            if (author != null)
+            {
+                _context.Authors.Remove(author);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index), "Books");
+        }
     }
 }
+
 

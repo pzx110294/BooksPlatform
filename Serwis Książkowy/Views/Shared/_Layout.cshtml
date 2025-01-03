@@ -33,9 +33,7 @@
                         }
                         @if (User.IsInRole("Admin"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Books" asp-action="Create">Add Book</a>
-                            </li>
+                            <partial name="CreateSelectOptions"/>
                         }
                         
                     </ul>

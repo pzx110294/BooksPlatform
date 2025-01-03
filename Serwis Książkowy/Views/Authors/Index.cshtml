@@ -1,7 +1,9 @@
 ﻿@model Serwis_Książkowy.ViewModels.AuthorBookViewModel
 
 <partial name="Header"/>
-
+@if (User.IsInRole("Admin")){
+    <a asp-controller="Authors" asp-action="Edit" asp-route-id="@Model.AuthorViewModel.Author.AuthorId">Edit</a>
+}
 <partial name="Follow" model="Model.AuthorViewModel"/><br/>
 
 <partial name="_BooksList" model="Model.BookViewModel"/>

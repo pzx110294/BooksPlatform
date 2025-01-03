@@ -1,0 +1,16 @@
+﻿<li class="nav-item">
+    <select class="form-select" onchange="navigateToPage(this.value)">
+        <option value="" disabled selected>Create new...</option>
+        <option value="/Books/Create">Book</option>
+        <option value="/Authors/Create">Author</option>
+        <option value="/Genre/Create">Genre</option>
+    </select>
+</li>
+
+<script>
+    function navigateToPage(url) {
+        if (url) {
+            window.location.href = url;
+        }
+    }
+</script>
