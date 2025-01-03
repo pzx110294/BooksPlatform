@@ -90,6 +90,19 @@ namespace Serwis_Książkowy.Controllers
         }
         
 
+        [Authorize (Roles = "Admin")]
+        public IActionResult ListBooks(int page = 1, int pageSize = 30)
+        {
+            var books = _context.Books
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize);
+            int totalBooks = _context.Books.Count();
+            int totalPages = (int)Math.Ceiling(totalBooks / (double)pageSize);
+
+            SetPaginationData(page, totalPages);
+
+            return View(books);
+        }
         // GET: Books/Edit/5
         [Authorize (Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)

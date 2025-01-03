@@ -23,6 +23,7 @@ namespace Serwis_Książkowy.Controllers
             {
                 return NotFound();
             }
+            page = page < 1 ? 1 : page;
 
             string userId = User.GetUserId();
             var results = BookQueryHelper.GetSearchedBooks(_context, searchQuery, page, pageSize, userId);

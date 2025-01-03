@@ -22,6 +22,7 @@ namespace Serwis_Książkowy.Controllers
             {
                 return NotFound();
             }
+            page = page < 1 ? 1 : page;
             string userId = User.GetUserId();
             var results = BookQueryHelper.GetAuthorBooks(_context, authorId, page, pageSize, userId);
 
@@ -107,24 +108,31 @@ namespace Serwis_Książkowy.Controllers
         [Authorize (Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("AuthorId,Name")] Author author)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(author);
+            if (AuthorExists(author.Name))
             {
-                if (!AuthorExists(author.Name))
-                {
-                    _context.Add(author);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index), "Books");
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Author with this name already exists.");
-                }
+                ModelState.AddModelError(string.Empty, "Author with this name already exists.");
+                return View(author);
             }
-            return View(author);
+            _context.Add(author);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index), "Books");
         }
 
-        
 
+        [Authorize (Roles = "Admin")]
+        public IActionResult ListAuthors(int page = 1, int pageSize = 30)
+        {
+            var authors = _context.Authors
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize);
+            int totalAuthors = _context.Authors.Count();
+            int totalPages = (int)Math.Ceiling(totalAuthors / (double)pageSize);
+
+            SetPaginationData(page, totalPages);
+
+            return View(authors);
+        }
         // GET: Authors/Details/5
         [Authorize (Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)

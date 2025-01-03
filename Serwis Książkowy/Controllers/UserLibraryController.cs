@@ -21,6 +21,7 @@ namespace Serwis_Książkowy.Controllers
         // GET: UserLibrary
         public ActionResult Index(int page = 1, int pageSize = 10)
         {
+            page = page < 1 ? 1 : page;
             var userId = User.GetUserId();
             var results = BookQueryHelper.GetUserBooks(_context, userId, page, pageSize);
             IQueryable<BookViewModel> books = results.Books;
