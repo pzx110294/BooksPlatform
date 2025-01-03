@@ -83,8 +83,8 @@ namespace Serwis_Książkowy.Controllers
             var bookInLibrary = _context.UserLibraries.Find(userId, bookId);
             if (bookInLibrary != null) _context.UserLibraries.Remove(bookInLibrary); 
             _context.SaveChanges();
-
-            string referer = Request.Headers["Referer"].ToString().Split('?')[0];
+            
+            string referer = Request.Headers["Referer"].ToString();
             return Redirect(referer);
         }
     }

@@ -56,7 +56,7 @@ public static class BookQueryHelper
             .Where(u => u.UserId == userId);
         
         int totalPages = GetTotalPages(query, pageSize);
-        
+        page = page > totalPages ? totalPages : page;
         IQueryable<BookViewModel> books = query
             .Include(b => b.Book)
             .ThenInclude(b => b.UserLibraries.Where(u => u.UserId == userId))

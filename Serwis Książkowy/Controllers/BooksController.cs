@@ -22,8 +22,8 @@ namespace Serwis_Książkowy.Controllers
         // GET: Best rated books
         public IActionResult Index(int page = 1, int pageSize = 10)
         {
+            page = page < 1 ? 1 : page;
             string userId = User.GetUserId();
-            
             var results = BookQueryHelper.GetBestRatedBooks(_context, page, pageSize, userId);
             IQueryable<BookViewModel> bookViewModel = results.Books;
             
@@ -72,7 +72,7 @@ namespace Serwis_Książkowy.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (!BookQueryHelper.BookExists(book.Isbn, _context))
+                if (!BookExists(book.Isbn))
                 {
                     _context.Add(book);
                     await _context.SaveChangesAsync();
@@ -83,19 +83,7 @@ namespace Serwis_Książkowy.Controllers
                     ModelState.AddModelError(string.Empty, "A book with this ISBN already exists.");
                 }
             }
-            else
-            {
-                // Log ModelState errors for debugging
-                foreach (var key in ModelState.Keys)
-                {
-                    var state = ModelState[key];
-                    if (state.Errors.Any())
-                    {
-                        var errors = state.Errors.Select(e => e.ErrorMessage);
-                        Console.WriteLine($"Key: {key}, Errors: {string.Join(", ", errors)}");
-                    }
-                }
-            }
+            
             ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "Name", book.AuthorId);
             ViewData["GenreId"] = new SelectList(_context.Genres, "GenreId", "Name", book.GenreId);
             return View(book);
@@ -143,7 +131,7 @@ namespace Serwis_Książkowy.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BookExists(book.BookId))
+                    if (!BookExists(book.Isbn))
                     {
                         return NotFound();
                     }
@@ -196,9 +184,9 @@ namespace Serwis_Książkowy.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BookExists(int id)
+        private bool BookExists(string isbn)
         {
-            return _context.Books.Any(e => e.BookId == id);
+            return _context.Books.Any(e => e.Isbn == isbn);
         }
     }
 }

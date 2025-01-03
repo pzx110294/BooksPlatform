@@ -12,7 +12,7 @@
         @if (!String.IsNullOrEmpty(searchQuery)){
             <input type="hidden" name="searchQuery" value=@searchQuery />
         }
-        @if (currentPage > 1)
+        @if (currentPage > 1 && currentPage <= totalPages)
         {
             <button type="submit" name="page" value=@previousPage >Previous Page</button>
         }

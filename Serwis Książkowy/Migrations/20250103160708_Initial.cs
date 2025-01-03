@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Serwis_Książkowy.Migrations
 {
     /// <inheritdoc />
@@ -215,9 +217,9 @@ namespace Serwis_Książkowy.Migrations
                     Isbn = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AuthorId = table.Column<int>(type: "int", nullable: false),
-                    GenreId = table.Column<int>(type: "int", nullable: true),
+                    GenreId = table.Column<int>(type: "int", nullable: false),
                     PublicationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Rating = table.Column<float>(type: "real", nullable: true)
+                    Rating = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -232,7 +234,8 @@ namespace Serwis_Książkowy.Migrations
                         name: "FK_Books_Genres_GenreId",
                         column: x => x.GenreId,
                         principalTable: "Genres",
-                        principalColumn: "GenreId");
+                        principalColumn: "GenreId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -288,6 +291,22 @@ namespace Serwis_Książkowy.Migrations
                         principalTable: "Books",
                         principalColumn: "BookId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Genres",
+                columns: new[] { "GenreId", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Fiction" },
+                    { 2, "Non-Fiction" },
+                    { 3, "Science Fiction" },
+                    { 4, "Mystery" },
+                    { 5, "Thriller" },
+                    { 6, "Romance" },
+                    { 7, "Fantasy" },
+                    { 8, "Biography" },
+                    { 9, "History" }
                 });
 
             migrationBuilder.CreateIndex(

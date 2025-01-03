@@ -6,9 +6,9 @@ namespace Serwis_Książkowy.Controllers
     {
         protected void SetPaginationData(int currentPage, int totalPages)
         {
+            currentPage = currentPage > totalPages ? totalPages : currentPage;
             int previousPage = currentPage <= 1 ? 1 : currentPage - 1; 
             int nextPage = currentPage >= totalPages ? totalPages : currentPage + 1;
-
             ViewData["CurrentPage"] = currentPage;
             ViewData["PreviousPage"] = previousPage;
             ViewData["NextPage"] = nextPage;
