@@ -1,4 +1,6 @@
-﻿namespace Serwis_Książkowy.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Serwis_Książkowy.Models;
 
 public class Review
 {
@@ -9,5 +11,6 @@ public class Review
     public Book Book { get; set; }
     public float Rating { get; set; }
     public string ReviewText { get; set; }
+    [DisplayFormat(DataFormatString = "{0:dd MMMM, yyyy}")]
     public DateTime CreatedAt { get; set; }
 }

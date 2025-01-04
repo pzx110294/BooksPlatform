@@ -1,4 +1,6 @@
-﻿namespace Serwis_Książkowy.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Serwis_Książkowy.Models;
 
 public class Book
 {
@@ -9,6 +11,7 @@ public class Book
     public Author? Author { get; set; }
     public int GenreId { get; set; }
     public Genre? Genre { get; set; }
+    [DisplayFormat(DataFormatString = "{0:dd MMMM, yyyy}")]
     public DateTime PublicationDate { get; set; }
     public float? Rating { get; set; }
     public ICollection<Review> Reviews { get; set; } = new List<Review>();

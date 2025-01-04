@@ -9,7 +9,7 @@
     <a asp-controller="Books" asp-action="Details" asp-route-id="@Model.Book.BookId">@Model.Book.Title</a>
     | <a asp-controller="Authors" asp-action="Index" asp-route-authorId="@Model.Book.AuthorId">@Model.Book.Author.Name</a>
     | <a asp-controller="Genres" asp-action="ListBooksByGenre" asp-route-genreId="@Model.Book.GenreId">@Model.Book.Genre.Name</a>
-    | @Model.Book.Rating | @Model.Book.PublicationDate
+    | @Model.Book.Rating | @Html.DisplayFor(model => model.Book.PublicationDate)
     @if (User.Identity.IsAuthenticated)
     {
         if (Model.IsInLibrary)
