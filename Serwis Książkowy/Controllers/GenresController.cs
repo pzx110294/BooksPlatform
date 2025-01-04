@@ -31,7 +31,8 @@ namespace Serwis_Książkowy.Controllers
             int totalPages = results.TotalPages;
             SetPaginationData(page, totalPages);
 
-            ViewData["Header"] = _context.Genres.Find(genreId).Name;
+            ViewData["GenreId"] = genreId;
+            ViewData["Header"] = _context.Genres.Find(genreId)?.Name;
             return View(books);
         }
         // GET: Genres

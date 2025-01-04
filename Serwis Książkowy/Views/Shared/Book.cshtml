@@ -7,10 +7,10 @@
         <a asp-controller="Books" asp-action="Details" asp-route-id="@Model.Book.BookId"><img src=@coverUrl /></a>
     }
     <a asp-controller="Books" asp-action="Details" asp-route-id="@Model.Book.BookId">@Model.Book.Title</a>
-    | <a asp-controller="Authors" asp-action="Index" asp-route-authorId="@Model.Book.AuthorId">@Model.Book.Author.Name</a>
-    | <a asp-controller="Genres" asp-action="ListBooksByGenre" asp-route-genreId="@Model.Book.GenreId">@Model.Book.Genre.Name</a>
-    | @Model.Book.Rating | @Html.DisplayFor(model => model.Book.PublicationDate)
-    @if (User.Identity.IsAuthenticated)
+    | <a asp-controller="Authors" asp-action="Index" asp-route-authorId="@Model.Book.AuthorId">@Model.Book.Author?.Name</a>
+    | <a asp-controller="Genres" asp-action="ListBooksByGenre" asp-route-genreId="@Model.Book.GenreId">@Model.Book.Genre?.Name</a>
+    | @Model.Book.Rating?.ToString("0.##") | @Html.DisplayFor(model => model.Book.PublicationDate)
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
     {
         if (Model.IsInLibrary)
         {

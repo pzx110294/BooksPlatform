@@ -2,6 +2,7 @@
     @{
         string searchQuery = ViewData["SearchQuery"]?.ToString() ?? String.Empty;
         string searchType = ViewData["SearchType"]?.ToString() ?? String.Empty;
+        string genreId = ViewData["GenreId"]?.ToString() ?? String.Empty;
         string previousPage = ViewData["PreviousPage"]?.ToString() ?? String.Empty;
         string nextPage = ViewData["NextPage"]?.ToString() ?? String.Empty;
         int totalPages = (int)(ViewData["TotalPages"] ?? 0);
@@ -17,7 +18,10 @@
         {
             <input type="hidden" name="searchType" value="@searchType" />
         }
-
+        @if (!String.IsNullOrEmpty(genreId))
+        {
+            <input type="hidden" name="genreId" value="@genreId" />
+        }
         @if (currentPage > 1 && currentPage <= totalPages)
         {
             <button type="submit" name="page" value="@previousPage">Previous Page</button>

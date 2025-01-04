@@ -2,6 +2,8 @@
 using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.Configuration.Attributes;
+using Microsoft.EntityFrameworkCore;
+using Serwis_Książkowy.Helpers;
 using Serwis_Książkowy.Models;
 
 namespace Serwis_Książkowy.Data;
@@ -9,13 +11,13 @@ namespace Serwis_Książkowy.Data;
 public static class DatasetLoader
 {
     private const string filePath = "Dataset/books.csv";
-    private static ApplicationDbContext _dbContext;
+    private static ApplicationDbContext context;
     
     public static void LoadDataset(ApplicationDbContext dbContext)
     {
         if (dbContext.IsAlreadyLoaded()) return;
         
-        _dbContext = dbContext;
+        context = dbContext;
         CsvConfig csvConfig = ConfigureCsvLoader();
         var records = ReadCsvFile(csvConfig);
         AddRecordsToDb(records);
@@ -40,13 +42,42 @@ public static class DatasetLoader
 
     private static void AddRecordsToDb(IEnumerable<BookCsvModel> records)
     {
+        Random rand = new Random();
         foreach (BookCsvModel record in records)
         {
             Author author = AddAuthor(record.Authors);
-            AddBook(record, author);
-            
-            _dbContext.SaveChanges();
+            Book? book = AddBook(record, author);
+            if (book == null) continue;
+            AddRandomReviews(book, rand);
+            context.SaveChanges();
         }
+
+        CalculateRatings();
+        
+        context.SaveChanges();
+    }
+
+
+    private static void AddRandomReviews(Book book, Random rand)
+    {
+        int reviewsAmount = rand.Next(2, 6);
+        for (int i = 0; i < reviewsAmount; i++)
+        {
+            AddRandomReview(book, rand);
+        }
+    }
+    private static void AddRandomReview(Book book, Random random)
+    {
+        float rating = random.Next(1, 6);
+        string reviewText = "Test review";
+        Review review = new Review
+        {
+            Book = book,
+            Rating = rating,
+            ReviewText = reviewText,
+            CreatedAt = DateTime.Now
+        };
+        context.Reviews.Add(review);
     }
 
     private static Author AddAuthor(string authorName)
@@ -60,36 +91,45 @@ public static class DatasetLoader
             return existingAuthor;
         }
         author = new Author { Name = authorName };
-        _dbContext.Authors.Add(author);
+        context.Authors.Add(author);
         return author;
     }
     
     
     private static Author? CheckIfAuthorExists(string name)
     {
-        return _dbContext.Authors.SingleOrDefault(a => a.Name == name);
+        return context.Authors.SingleOrDefault(a => a.Name == name);
     }
-    private static void AddBook(BookCsvModel record, Author author)
+    private static Book? AddBook(BookCsvModel record, Author author)
     {
         var bookTitle = record.Title.Trim();
-        if (CheckIfBookExists(bookTitle)) return;
-        List<Genre> genres = _dbContext.Genres.ToList();
+        if (CheckIfBookExists(bookTitle)) return null;
+        List<Genre> genres = context.Genres.ToList();
         Random random = new();
         Genre randomGenre = genres[random.Next(genres.Count)];
-        _dbContext.Books.Add(new Book
+        Book book = new Book
         {
             Title = bookTitle,
             Author = author,
             PublicationDate = record.PublicationDate,
             Isbn = record.ISBN13,
-            Rating = record.AverageRating,
             Genre = randomGenre
-        });
+        };
+        context.Books.Add(book);
+        return book;
     }
 
     private static bool CheckIfBookExists(string title)
     {
-        return _dbContext.Books.Count(b => b.Title == title) > 0;
+        return context.Books.Count(b => b.Title == title) > 0;
+    }
+    private static void CalculateRatings()
+    {
+        foreach (Book book in context.Books.Include(book => book.Reviews))
+        {
+            book.Rating = book.Reviews.Any() ? book.Reviews.Average(r => r.Rating) : null;
+        }
+
     }
 }
 

@@ -169,9 +169,17 @@ public static class BookQueryHelper
         };
     }
 
-    public static bool BookExists(string isbn, ApplicationDbContext context)
+    public static void UpdateBookRating(ApplicationDbContext context, int bookId)
     {
-        return context.Books.Any(b => b.Isbn == isbn);
+        var book = context.Books
+            .Include(b => b.Reviews)
+            .FirstOrDefault(b => b.BookId == bookId);
+
+        if (book != null)
+        {
+            book.Rating = book.Reviews.Any() ? book.Reviews.Average(r => r.Rating) : null;
+            context.SaveChanges();
+        }
     }
 
     public static (IQueryable<BookViewModel> Books, int TotalPages) GetGenreBooks(ApplicationDbContext context,

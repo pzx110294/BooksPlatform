@@ -37,6 +37,10 @@ namespace Serwis_Książkowy.Controllers
         public IActionResult AddReview(int bookId, string reviewText, float rating)
         {
             string userId = User.GetUserId();
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
             if (ModelState.IsValid)
             {
                 bool alreadyReviewed = _context.Reviews.Any(r => r.UserId == userId && r.BookId == bookId);
@@ -56,6 +60,7 @@ namespace Serwis_Książkowy.Controllers
                 };
                 
                 _context.Reviews.Add(review);
+                BookQueryHelper.UpdateBookRating(_context, bookId);
                 _context.SaveChanges();
             }
             return RedirectToAction(nameof(Details), new {id = bookId});

@@ -10,7 +10,8 @@ public static class ReviewConfig
         modelBuilder.Entity<Review>()
             .HasOne(r => r.User)
             .WithMany(u => u.Reviews)
-            .HasForeignKey(r => r.UserId);
+            .HasForeignKey(r => r.UserId)
+            .IsRequired(false);
         modelBuilder.Entity<Review>()
             .HasOne(r => r.Book)
             .WithMany(b => b.Reviews)
