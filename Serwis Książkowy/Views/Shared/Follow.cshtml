@@ -6,14 +6,14 @@
         {
             <form asp-controller="Authors" asp-action="Unfollow" method="post">
                 <input type="hidden" name="authorId" value="@Model.Author.AuthorId"/>
-                <button type="submit">Unfollow</button>
+                <button type="submit" class="btn btn-primary">Unfollow</button>
             </form>
         }
         else
         {
             <form asp-controller="Authors" asp-action="Follow" method="post">
                 <input type="hidden" name="authorId" value="@Model.Author.AuthorId"/>
-                <button type="submit">Follow</button>
+                <button type="submit" class="btn btn-primary">Follow</button>
             </form>
         }
     </div>

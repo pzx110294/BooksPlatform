@@ -2,17 +2,25 @@
 
 @foreach (var author in Model)
 {
-    <div>
-        <div class="row">
-            <div class="col">
+    <div class="mb-4">
+        <div class="row align-items-center mb-3">
+            <div class="col-md-8">
                 <partial name="Author" model="author.AuthorViewModel.Author"/>
             </div>
-            <div class="col">
+            <div class="col-md-4 text-end">
                 <partial name="Follow" model="author.AuthorViewModel"/>
             </div>
-                
         </div>
-        <partial name="_BooksList" model="author.BookViewModel"/><br/>
+        
+        <div class="row">
+            <div class="col">
+                <partial name="_BooksList" model="author.BookViewModel"/>
+            </div>
+        </div>
+        
+        <br/>
     </div>
 }
-<partial name="Pagination" />
+
+
+<partial name="Pagination"/>

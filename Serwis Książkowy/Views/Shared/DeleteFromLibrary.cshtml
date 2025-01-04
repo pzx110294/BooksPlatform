@@ -1,0 +1,6 @@
+﻿@model Book
+
+<form asp-area="" asp-controller="UserLibrary" asp-action="DeleteFromLibrary" method="post">
+    <input type="hidden" name="bookId" value="@Model.BookId"/>
+    <button type="submit" class="btn btn-sm btn-outline-danger">Delete from library</button>
+</form>

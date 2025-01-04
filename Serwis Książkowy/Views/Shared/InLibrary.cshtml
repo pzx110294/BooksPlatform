@@ -1,6 +1,5 @@
-﻿| <b>@Model.Status</b>
+﻿@model BookViewModel
 
-<form asp-area="" asp-controller="UserLibrary" asp-action="DeleteFromLibrary" method="post">
-    <input type="hidden" name="bookId" value="@Model.Book.BookId" />
-    <button type="submit" class="nav-link text-dark">Delete</button>
-</form>
+<div class="d-flex align-items-center gap-2">
+    <span class="badge bg-primary">@Model.Status</span>
+</div>

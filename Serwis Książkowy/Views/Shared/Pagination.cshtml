@@ -8,28 +8,29 @@
         int totalPages = (int)(ViewData["TotalPages"] ?? 0);
         int currentPage = (int)(ViewData["CurrentPage"] ?? 0);
     }
+    <div class="d-flex justify-content-center mt-4">
+        <form method="get">
+            @if (!String.IsNullOrEmpty(searchQuery))
+            {
+                <input type="hidden" name="searchQuery" value="@searchQuery" />
+            }
+            @if (!String.IsNullOrEmpty(searchType))
+            {
+                <input type="hidden" name="searchType" value="@searchType" />
+            }
+            @if (!String.IsNullOrEmpty(genreId))
+            {
+                <input type="hidden" name="genreId" value="@genreId" />
+            }
+            @if (currentPage > 1 && currentPage <= totalPages)
+            {
+                <button class="btn btn-outline-dark" type="submit" name="page" value="@previousPage">Previous Page</button>
+            }
 
-    <form method="get">
-        @if (!String.IsNullOrEmpty(searchQuery))
-        {
-            <input type="hidden" name="searchQuery" value="@searchQuery" />
-        }
-        @if (!String.IsNullOrEmpty(searchType))
-        {
-            <input type="hidden" name="searchType" value="@searchType" />
-        }
-        @if (!String.IsNullOrEmpty(genreId))
-        {
-            <input type="hidden" name="genreId" value="@genreId" />
-        }
-        @if (currentPage > 1 && currentPage <= totalPages)
-        {
-            <button type="submit" name="page" value="@previousPage">Previous Page</button>
-        }
-
-        @if (currentPage < totalPages)
-        {
-            <button type="submit" name="page" value="@nextPage">Next Page</button>
-        }
-    </form>
+            @if (currentPage < totalPages)
+            {
+                <button class="btn btn-outline-dark" type="submit" name="page" value="@nextPage">Next Page</button>
+            }
+        </form>
+    </div>
 </div>

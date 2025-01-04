@@ -3,16 +3,13 @@
 @{
     ViewData["Title"] = "Details";
 }
-
-<div class="row">
+<div class="row mt-5">
     @{
-    string coverUrl = "https://covers.openlibrary.org/b/isbn/" + Model.Isbn + "-M.jpg";
+        string coverUrl = "https://covers.openlibrary.org/b/isbn/" + Model.Isbn + "-L.jpg";
     }
-    <img width="50%" height="10%" src=@coverUrl />
-</div>
+    <img src="@coverUrl" class="img-fluid mx-auto d-block mt-3 mb-3" style="max-width: 60%;" alt="Book Cover" />
+</div> <br/>
 <div>
-    <h4>Book</h4>
-    <hr />
     <dl class="row">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <dt class="col-sm-2">

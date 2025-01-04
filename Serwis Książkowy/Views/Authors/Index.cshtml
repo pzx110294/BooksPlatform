@@ -1,9 +1,16 @@
 ﻿@model Serwis_Książkowy.ViewModels.AuthorBookViewModel
 
 <partial name="Header"/>
-@if (User.IsInRole("Admin")){
-    <a asp-controller="Authors" asp-action="Edit" asp-route-id="@Model.AuthorViewModel.Author.AuthorId">Edit</a>
-}
-<partial name="Follow" model="Model.AuthorViewModel"/><br/>
+
+<div class="d-flex justify-content-between align-items-center">
+    
+    <partial name="Follow" model="Model.AuthorViewModel"/>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-controller="Authors" asp-action="Edit" asp-route-id="@Model.AuthorViewModel.Author.AuthorId" class="btn btn-sm btn-outline-primary">Edit</a>
+    }
+</div>
+
+<br/>
 
 <partial name="_BooksList" model="Model.BookViewModel"/>

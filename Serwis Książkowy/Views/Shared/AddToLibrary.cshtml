@@ -1,14 +1,18 @@
 ﻿@model Book
+
 <div>
     <form asp-controller="UserLibrary" asp-action="AddToLibrary" method="post">
-        <input type="hidden" name="BookId" value="@Model.BookId"/>
-        <label for="status">Set status:</label>
-        <select id="status" name="Status">
-            <option value="Reading">Reading</option>
-            <option value="Completed">Completed</option>
-            <option value="Dropped">Dropped</option>
-            <option value="PlanToRead">Plan to Read</option>
-        </select>
-        <button type="submit">Add to library</button>
+        <input type="hidden" name="BookId" value="@Model.BookId" />
+        <div class="input-group" style="max-width: 400px;">
+            <label for="status" class="input-group-text">Set status:</label>
+            <select id="status" name="Status" class="form-select" style="width: auto;">
+                <option value="Reading">Reading</option>
+                <option value="Completed">Completed</option>
+                <option value="Dropped">Dropped</option>
+                <option value="PlanToRead">Plan to Read</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Add to library</button>
+        </div>
     </form>
+    
 </div>

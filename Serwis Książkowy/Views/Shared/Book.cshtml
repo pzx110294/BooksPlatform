@@ -1,25 +1,65 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model BookViewModel
+@{
+    string coverUrl = "https://covers.openlibrary.org/b/isbn/" + Model.Book.Isbn + "-S.jpg";
+}
+<div class="card mb-3">
+    <div class="row g-0">
+        <div class="col-md-1 d-flex justify-content-center align-items-center">
+            <a asp-controller="Books" asp-action="Details" asp-route-id="@Model.Book.BookId">
+                <img src="@coverUrl" class="img-fluid rounded-start m-lg-3" width="80px" height="auto">
+            </a>
+        </div>
+  
+        <div class="col-md-11">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a asp-controller="Books" asp-action="Details" asp-route-id="@Model.Book.BookId" class="text-decoration-none">@Model.Book.Title</a>
+                </h5>
+                <div class="card-text">
+                    <div class="text-muted mb-1">
+                        Author: <a asp-controller="Authors" asp-action="Index" asp-route-authorId="@Model.Book.AuthorId" class="text-decoration-none">@Model.Book.Author?.Name</a>
+                    </div>
+                    <div class="text-muted mb-1">
+                        Genre: <a asp-controller="Genres" asp-action="ListBooksByGenre" asp-route-genreId="@Model.Book.GenreId" class="text-decoration-none">@Model.Book.Genre?.Name</a>
+                    </div>
+                    <div class="text-muted mb-1">
+                        Rating: @Model.Book.Rating?.ToString("0.##")
+                    </div>
+                    <div class="text-muted mb-1">
+                        Date: @Html.DisplayFor(model => model.Book.PublicationDate)
+                    </div>
+                </div>
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <div class="mt-2 d-flex flex-column">
+                        @if (Model.IsInLibrary)
+                        {
+                            <div class="mb-2">
+                                <partial name="InLibrary" model="Model"></partial>
+                            </div>
+                        }
 
-<div>
-    @{
-        string coverUrl = "https://covers.openlibrary.org/b/isbn/" + Model.Book.Isbn + "-S.jpg";
-        <a asp-controller="Books" asp-action="Details" asp-route-id="@Model.Book.BookId"><img src=@coverUrl /></a>
-    }
-    <a asp-controller="Books" asp-action="Details" asp-route-id="@Model.Book.BookId">@Model.Book.Title</a>
-    | <a asp-controller="Authors" asp-action="Index" asp-route-authorId="@Model.Book.AuthorId">@Model.Book.Author?.Name</a>
-    | <a asp-controller="Genres" asp-action="ListBooksByGenre" asp-route-genreId="@Model.Book.GenreId">@Model.Book.Genre?.Name</a>
-    | @Model.Book.Rating?.ToString("0.##") | @Html.DisplayFor(model => model.Book.PublicationDate)
-    @if (User.Identity != null && User.Identity.IsAuthenticated)
-    {
-        if (Model.IsInLibrary)
-        {
-            <partial name="InLibrary" model="Model"></partial>
-        }
-        <partial name="AddToLibrary" model="Model.Book"/>
-        @if (User.IsInRole("Admin"))
-        {
-            <a asp-controller="Books" asp-action="Edit" asp-route-id="@Model.Book.BookId">Edit</a>
-        }
-    }
+                        <div class="d-flex align-items-center">
+                            <div class="mb-1">
+                                <partial name="AddToLibrary" model="Model.Book"/>
+                            </div>
+                            <div class="m-2">
+                                @if (Model.IsInLibrary)
+                                {
+                                    <partial name="DeleteFromLibrary" model="Model.Book"/>
+                                }
+                            </div>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <div class="ms-auto">
+                                    <a asp-controller="Books" asp-action="Edit" asp-route-id="@Model.Book.BookId" class="btn btn-sm btn-outline-primary">Edit</a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 </div>
