@@ -32,7 +32,35 @@ namespace Serwis_Książkowy.Controllers
             return View(bookViewModel);
         }
 
-        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddReview(int bookId, string reviewText, float rating)
+        {
+            string userId = User.GetUserId();
+            if (ModelState.IsValid)
+            {
+                bool alreadyReviewed = _context.Reviews.Any(r => r.UserId == userId && r.BookId == bookId);
+                if (alreadyReviewed)
+                {
+                    ModelState.AddModelError(string.Empty, "You have already reviewed this book.");
+                    return RedirectToAction(nameof(Details), new { id = bookId });
+                }
+
+                Review review = new Review
+                {
+                    BookId = bookId,
+                    UserId = userId,
+                    ReviewText = reviewText,
+                    Rating = rating,
+                    CreatedAt = DateTime.Today
+                };
+                
+                _context.Reviews.Add(review);
+                _context.SaveChanges();
+            }
+            return RedirectToAction(nameof(Details), new {id = bookId});
+
+        }
         // GET: Books/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -44,12 +72,15 @@ namespace Serwis_Książkowy.Controllers
             var book = await _context.Books
                 .Include(b => b.Author)
                 .Include(b => b.Genre)
+                .Include(b => b.Reviews)
                 .FirstOrDefaultAsync(m => m.BookId == id);
             if (book == null)
             {
                 return NotFound();
             }
 
+            string userId = User.GetUserId();
+            ViewBag.Reviewed = book.Reviews.Any(r => r.UserId == userId);
             return View(book);
         }
 

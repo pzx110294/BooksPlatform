@@ -1,0 +1,17 @@
+﻿@model ICollection<Review>
+<ul class="list-group">
+    @foreach (Review review in Model)
+    {
+        <li class="list-group-item">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <span class="text-muted">@Html.DisplayFor(model => review.CreatedAt)</span>
+                </div>
+                <div>
+                    <span class="badge bg-primary">@review.Rating</span>
+                </div>
+            </div>
+            <p>@review.ReviewText</p>
+        </li>
+    }
+</ul>
