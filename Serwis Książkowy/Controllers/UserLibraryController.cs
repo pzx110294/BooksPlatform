@@ -27,7 +27,7 @@ namespace Serwis_Książkowy.Controllers
             IQueryable<BookViewModel> books = results.Books;
             int totalPages = results.TotalPages;
             SetPaginationData(page, totalPages);
-            string emptyLibrary = books.IsNullOrEmpty() ? " is empty" : String.Empty;
+            string emptyLibrary = !books.Any() ? " is empty" : String.Empty;
             ViewData["Header"] = "Your library" + emptyLibrary;
             return View(books);
         }

@@ -75,6 +75,7 @@ public static class BookQueryHelper
             .Where(u => u.UserId == userId);
         
         int totalPages = GetTotalPages(query, pageSize);
+        page = CheckPageBounds(page, totalPages);
         IQueryable<BookViewModel> books = query
             .Include(b => b.Book)
             .ThenInclude(b => b.UserLibraries.Where(u => u.UserId == userId))
@@ -87,12 +88,24 @@ public static class BookQueryHelper
         return (books, totalPages);
     }
 
+    private static int CheckPageBounds(int page, int totalPages)
+{
+    if (totalPages == 0)
+    {
+        return 1;
+    }
+    if (page > totalPages)
+    {
+        return totalPages;
+    }
+    return page;
+}
+
     public static (IQueryable<BookViewModel> Books, int TotalPages, bool isFollowed) GetAuthorBooks(
         ApplicationDbContext context, int authorId, int page, int pageSize, string? userId = null)
     {
         IQueryable<Book> query = context.Books.Where(b => b.AuthorId == authorId);
         int totalPages = GetTotalPages(query, pageSize);
-
         IQueryable<BookViewModel> books = query
             .Include(a => a.Author)
             .Include(l => l.UserLibraries)
@@ -116,7 +129,8 @@ public static class BookQueryHelper
         IQueryable<FavouriteAuthor> query = context.FavouriteAuthors
             .Where(fa => fa.UserId == userId);
         int totalPages = GetTotalPages(query, pageSize);
-        
+        page = CheckPageBounds(page, totalPages);
+
         var authors = query
             .Select(a => new AuthorBookViewModel
             {
