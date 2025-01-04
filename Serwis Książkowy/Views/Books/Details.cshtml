@@ -59,6 +59,18 @@
 {
     <partial name="AddReview" model="Model.BookId"/>
 }
+@if (TempData["ReviewErrors"] != null)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in (string[])TempData["ReviewErrors"])
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+    TempData.Remove("ReviewErrors");
+}
 <partial name="Reviews" model="@Model.Reviews"/>
 <div>
     @if (User.IsInRole("Admin"))
@@ -67,3 +79,4 @@
     }
     <a asp-action="Index">Back to List</a>
 </div>
+

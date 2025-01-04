@@ -41,31 +41,38 @@ namespace Serwis_Książkowy.Controllers
             {
                 return Unauthorized();
             }
-            if (ModelState.IsValid)
+            if (string.IsNullOrWhiteSpace(reviewText) || reviewText.Length > 10 || rating < 0 || rating > 5)
             {
-                bool alreadyReviewed = _context.Reviews.Any(r => r.UserId == userId && r.BookId == bookId);
-                if (alreadyReviewed)
-                {
-                    ModelState.AddModelError(string.Empty, "You have already reviewed this book.");
-                    return RedirectToAction(nameof(Details), new { id = bookId });
-                }
-
-                Review review = new Review
-                {
-                    BookId = bookId,
-                    UserId = userId,
-                    ReviewText = reviewText,
-                    Rating = rating,
-                    CreatedAt = DateTime.Today
-                };
-                
-                _context.Reviews.Add(review);
-                BookQueryHelper.UpdateBookRating(_context, bookId);
-                _context.SaveChanges();
+                TempData["ReviewErrors"] = new[] { "Invalid review input." };
+                TempData["ReviewText"] = reviewText;
+                return RedirectToAction(nameof(Details), new { id = bookId });
             }
-            return RedirectToAction(nameof(Details), new {id = bookId});
+            
+            bool alreadyReviewed = _context.Reviews.Any(r => r.UserId == userId && r.BookId == bookId);
+            if (alreadyReviewed)
+            {
+                TempData["ReviewErrors"] = new[] { "You have already reviewed this book." };
+                return RedirectToAction(nameof(Details), new { id = bookId });
+            }
 
+            // Create and save the review
+            var review = new Review
+            {
+                BookId = bookId,
+                UserId = userId,
+                ReviewText = reviewText,
+                Rating = rating,
+                CreatedAt = DateTime.Today
+            };
+
+            _context.Reviews.Add(review);
+            BookQueryHelper.UpdateBookRating(_context, bookId);
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(Details), new { id = bookId });
         }
+
+
         // GET: Books/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -189,7 +196,8 @@ namespace Serwis_Książkowy.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                
+                return RedirectToAction(nameof(Details), new { id = id});
             }
             ViewData["AuthorId"] = new SelectList(_context.Authors, "AuthorId", "Name", book.AuthorId);
             ViewData["GenreId"] = new SelectList(_context.Genres, "GenreId", "Name", book.GenreId);

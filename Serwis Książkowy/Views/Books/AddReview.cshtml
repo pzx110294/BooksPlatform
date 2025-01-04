@@ -1,10 +1,9 @@
 ﻿<form asp-controller="Books" asp-action="AddReview" method="post">
-    <input type="hidden" name="bookId" value="@Model"/>
+    <input type="hidden" name="BookId" value="@Model" />
     <div class="form-group">
         <label for="reviewTextarea">Review</label>
-        <textarea class="form-control" id="reviewTextarea" name="reviewText"></textarea>
+        <textarea class="form-control" id="reviewTextarea" name="ReviewText" maxlength="1000">@TempData["ReviewText"]</textarea>
     </div>
-
     <div class="form-group">
         <label>Rating</label>
         <div class="d-flex flex-column align-items-end">
