@@ -18,10 +18,13 @@
         <input type="submit" value="Save" class="btn btn-primary"/>
     </div>
 </form>
-<a asp-controller="Authors" asp-action="Delete" asp-route-id="@Model.AuthorId"><button class="btn btn-danger">Delete</button></a>
-
-<div>
-    <a asp-action="Index" asp-route-authorId="@Model.AuthorId">Back to List</a>
+<div class="row justify-content-between">
+    <div class="col-auto align-content-center">
+        <a asp-action="Index">Back to List</a>
+    </div>
+    <div class="col-auto text-end">
+        <a asp-controller="Authors" asp-action="Delete" asp-route-id="@Model.AuthorId"><button class="btn btn-danger">Delete</button></a>
+    </div>
 </div>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

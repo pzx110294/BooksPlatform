@@ -1,21 +1,16 @@
 ﻿<form id="form" method="get" asp-action="Search" asp-controller="Home" class="row g-3 align-items-center">
-    <!-- Search Type Dropdown -->
     <div class="col-auto">
-        <label for="searchType" class="visually-hidden">Search Type</label>
         <select name="searchType" id="searchType" class="form-select">
             <option value="book">Book</option>
             <option value="author">Author</option>
         </select>
     </div>
-
-    <!-- Search Input -->
+    
     <div class="col-auto">
-        <label for="searchQuery" class="visually-hidden">Search</label>
-        <input type="search" name="searchQuery" id="searchQuery" class="form-control" placeholder="Search...">
+        <input type="search" name="searchQuery" id="searchQuery" class="form-control" placeholder="Search..." required="">
     </div>
-
-    <!-- Submit Button -->
-    <div class="col-auto">
+    
+    <div class="col-auto me-2">
         <button type="submit" class="btn btn-primary">Search</button>
     </div>
 </form>

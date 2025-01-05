@@ -3,15 +3,14 @@
 @{
     ViewData["Title"] = "Edit";
 }
-<div class="row">
+<div class="row mt-5">
     @{
-    string coverUrl = "https://covers.openlibrary.org/b/isbn/" + Model.Isbn + "-M.jpg";
+    string coverUrl = "https://covers.openlibrary.org/b/isbn/" + Model.Isbn + "-L.jpg";
     }
-    <img width="50%" height="10%" src=@coverUrl />
-</div>
+    <img src="@coverUrl" class="img-fluid mx-auto d-block mt-3 mb-3" style="max-width: 60%;" alt="Book Cover" />
+</div> <br/>
 <h1>Edit</h1>
 
-<h4>Book</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -38,21 +37,26 @@
                 <select asp-for="GenreId" class="form-control" asp-items="ViewBag.GenreId"></select>
                 <span asp-validation-for="GenreId" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-2">
                 <label asp-for="PublicationDate" class="control-label"></label>
                 <input asp-for="PublicationDate" class="form-control" />
                 <span asp-validation-for="PublicationDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-1">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
-        <a asp-controller="Books" asp-action="Delete" asp-route-id="@Model.BookId"><button class="btn btn-danger">Delete</button></a>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="row justify-content-between">
+    <div class="col-auto align-content-center">
+        <a asp-action="Index">Back to List</a>
+    </div>
+    <div class="col-auto text-end">
+        <a asp-controller="Books" asp-action="Delete" asp-route-id="@Model.BookId">
+            <button class="btn btn-danger">Delete</button>
+        </a>
+    </div>
 </div>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -19,6 +20,7 @@ namespace Serwis_Książkowy.Controllers
         }
 
         // GET: UserLibrary
+        [Authorize(Roles = "User, Admin")]
         public ActionResult Index(int page = 1, int pageSize = 10)
         {
             page = page < 1 ? 1 : page;
@@ -33,6 +35,7 @@ namespace Serwis_Książkowy.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "User, Admin")]
         public IActionResult AddToLibrary(int bookId, Status status)
         {
             var userId = User.GetUserId();
@@ -76,6 +79,7 @@ namespace Serwis_Książkowy.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "User, Admin")]
         public IActionResult DeleteFromLibrary(int bookId)
         {
             string userId = User.GetUserId();

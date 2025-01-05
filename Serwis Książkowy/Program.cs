@@ -41,6 +41,8 @@ namespace Serwis_Książkowy
                 DatasetLoader.LoadDataset(dbContext);
             }
 
+            app.UseExceptionHandler("/Home/Error");
+            app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
             
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

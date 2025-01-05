@@ -49,6 +49,7 @@ namespace Serwis_Książkowy.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "User, Admin")]
         public IActionResult Follow(int authorId)
         {
             string referer = Request.Headers["Referer"].ToString();
@@ -73,6 +74,7 @@ namespace Serwis_Książkowy.Controllers
             
             return Redirect(referer);
         }
+        [Authorize(Roles = "User, Admin")]
         public IActionResult Unfollow(int authorId)
         {
             string userId = User.GetUserId();
@@ -86,6 +88,7 @@ namespace Serwis_Książkowy.Controllers
             return Redirect(referer);
         }
 
+        [Authorize(Roles = "User, Admin")]
         public IActionResult FollowedAuthors(int page = 1, int pageSize = 10)
         {
             string userId = User.GetUserId();

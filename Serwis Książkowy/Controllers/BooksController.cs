@@ -34,6 +34,7 @@ namespace Serwis_Książkowy.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "User, Admin")]
         public IActionResult AddReview(int bookId, string reviewText, float rating)
         {
             string userId = User.GetUserId();
