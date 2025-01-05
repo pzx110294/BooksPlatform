@@ -18,8 +18,19 @@ public static class DatasetLoader
         if (dbContext.IsAlreadyLoaded()) return;
         
         context = dbContext;
-        CsvConfig csvConfig = ConfigureCsvLoader();
-        var records = ReadCsvFile(csvConfig);
+
+        IEnumerable<BookCsvModel> records;
+        try
+        {
+            CsvConfig csvConfig = ConfigureCsvLoader();
+            records = ReadCsvFile(csvConfig);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"\nAn error occurred while loading the dataset: {ex.Message}\n\n");
+            return;
+        }
+
         AddRecordsToDb(records);
     }
 
